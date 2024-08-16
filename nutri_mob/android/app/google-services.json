@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "2017151811",
+    "project_id": "nutri-mob",
+    "storage_bucket": "nutri-mob.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2017151811:android:bfd8ec1d63c563cc10fdf6",
+        "android_client_info": {
+          "package_name": "com.example.nutri_mob"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdGNxYopG1Mn8NFGaDZxIaIPqsPWToWt0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
