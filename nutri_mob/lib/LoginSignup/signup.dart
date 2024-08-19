@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nutri_mob/LoginSignup/Services/authentication.dart';
+import 'package:nutri_mob/LoginSignup/SlidingPages.dart';
 import 'package:nutri_mob/LoginSignup/Widget/snack_bar.dart';
 import 'login.dart';
 import 'Widget/text_field.dart'; // Ensure this file exists and is correctly implemented
@@ -38,7 +39,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (res == "Success") {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => const LoginScreen(),
+          builder: (context) => SlidingPages(),//LoginScreen(),
         ),
       );
     } else {

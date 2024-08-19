@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:nutri_mob/LoginSignup/PasswordForgot/forgot_password.dart';
+import 'package:nutri_mob/LoginSignup/Services/authentication.dart';
 import 'package:nutri_mob/LoginSignup/Widget/button.dart';
+import 'package:nutri_mob/LoginSignup/Widget/snack_bar.dart';
 import 'package:nutri_mob/LoginSignup/Widget/text_field.dart';
 import 'package:nutri_mob/home.dart';
-import 'Services/authentication.dart';
-import 'Widget/snack_bar.dart';
 import 'signup.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -48,97 +50,129 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void signInWithGoogle() async {
+    setState(() {
+      isLoading = true;
+    });
+    User? user = await AuthServices().signInWithGoogle();
+    if (user != null) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
+      );
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      showSnackBar(context, 'Google Sign-In failed');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                width: double.infinity,
-                height: height / 2.7,
-                child: Image.asset("assets/Login.png"),
-              ),
-              TextFieldInput(
-                textEditingController: emailController,
-                hintText: "Enter your email",
-                icon: Icons.email,
-                obscureText: false,
-              ),
-              TextFieldInput(
-                isPass: true,
-                textEditingController: passwordController,
-                hintText: "Enter your password",
-                icon: Icons.lock,
-                obscureText: true,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 35),
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ForgotPassword(),
+        child: Column(
+          children: [
+            SizedBox(
+              width: double.infinity,
+              height: height / 2.7,
+              child: Image.asset("assets/Login.png"),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    TextFieldInput(
+                      textEditingController: emailController,
+                      hintText: "Enter your email",
+                      icon: Icons.email,
+                      obscureText: false,
+                    ),
+                    TextFieldInput(
+                      isPass: true,
+                      textEditingController: passwordController,
+                      hintText: "Enter your password",
+                      icon: Icons.lock,
+                      obscureText: true,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 35),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ForgotPassword(),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            "Forgot Password?",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Colors.blue,
+                            ),
+                          ),
                         ),
-                      );
-                    },
-                    child: const Text(
-                      "Forgot Password?",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.blue,
                       ),
                     ),
-                  ),
+                    MyButton(
+                      onTap: loginUsers,
+                      text: "Log In",
+                      isLoading: isLoading,
+                    ),
+                    SizedBox(
+                      height: height / 15,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          "Don't have an account?",
+                          style: TextStyle(
+                            fontSize: 16,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SignUpScreen(),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            " Sign Up",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              MyButton(
-                onTap: loginUsers,
-                text: "Log In",
-                isLoading: isLoading,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: GestureDetector(
+                onTap: signInWithGoogle,
+                child: Image.asset('assets/google_logo.png', height: 70), // Use your image path here
               ),
-              SizedBox(
-                height: height / 15,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Don't have an account?",
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignUpScreen(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      " Sign Up",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

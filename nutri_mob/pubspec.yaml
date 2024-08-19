@@ -38,6 +38,8 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
   cloud_firestore: ^4.17.5
+  smooth_page_indicator: ^1.2.0+3
+  google_sign_in: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +72,8 @@ flutter:
      - assets/SignUp.png
      - assets/question.png
      - assets/question.gif
+     - assets/google_logo.png
+     - assets/slider1.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
