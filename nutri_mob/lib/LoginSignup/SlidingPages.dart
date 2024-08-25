@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+
 class SlidingPages extends StatefulWidget {
   @override
   _SlidingPagesState createState() => _SlidingPagesState();
@@ -72,6 +73,23 @@ class _SlidingPagesState extends State<SlidingPages> {
                 child: Text('Next'),
               ),
             ),
+          if (_currentPage == 2)
+            Positioned(
+              right: 16,
+              bottom: 16,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white, backgroundColor: Colors.green, // Text color
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => NextPage()),
+                  );
+                },
+                child: Text('Finish'),
+              ),
+            ),
           Positioned(
             bottom: 80,
             left: 0,
@@ -98,5 +116,19 @@ class _SlidingPagesState extends State<SlidingPages> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+}
+
+class NextPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Next Page'),
+      ),
+      body: Center(
+        child: Text('You have finished the slides!'),
+      ),
+    );
   }
 }
