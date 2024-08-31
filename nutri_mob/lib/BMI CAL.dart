@@ -55,7 +55,7 @@ class _BMICalculaterState extends State<BMICalculater> {
                   TextField(
                   controller: ftController,
                   decoration: InputDecoration(
-                  label: Text('Enter your Height(in Feet)'),
+                  label: Text('Enter your Height(in centimeters)'),
                   prefixIcon: Icon(Icons.height)
                   ),
                   keyboardType: TextInputType.number,
