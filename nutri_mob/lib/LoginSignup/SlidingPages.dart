@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nutri_mob/BMI%20CAL.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 
@@ -84,7 +85,7 @@ class _SlidingPagesState extends State<SlidingPages> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => NextPage()),
+                    MaterialPageRoute(builder: (context) => BMICalculater()),
                   );
                 },
                 child: Text('Finish'),
@@ -119,16 +120,3 @@ class _SlidingPagesState extends State<SlidingPages> {
   }
 }
 
-class NextPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Next Page'),
-      ),
-      body: Center(
-        child: Text('You have finished the slides!'),
-      ),
-    );
-  }
-}

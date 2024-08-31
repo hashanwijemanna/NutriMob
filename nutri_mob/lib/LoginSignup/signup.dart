@@ -50,6 +50,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
+  void signUp() async {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => SlidingPages(),//LoginScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
@@ -86,7 +94,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   obscureText: true,
                 ),
                 MyButton(
-                  onTap: signUpUser,
+                  //onTap: signUpUser,
+                  onTap: signUp,
                   text: "Sign Up",
                   isLoading: isLoading,
                 ),
