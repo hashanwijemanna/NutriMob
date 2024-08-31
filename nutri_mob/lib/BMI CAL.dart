@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nutri_mob/main.dart';
 
 class BMICalculater extends StatefulWidget {
   const BMICalculater({Key? key}) : super (key: key);
