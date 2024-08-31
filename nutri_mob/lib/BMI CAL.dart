@@ -11,7 +11,7 @@ class _BMICalculaterState extends State<BMICalculater> {
 
   var wtController = TextEditingController();
   var ftController = TextEditingController();
-  var inController = TextEditingController();
+  var agController = TextEditingController();
 
 
   var result = "";
@@ -64,9 +64,9 @@ class _BMICalculaterState extends State<BMICalculater> {
                   SizedBox(height: 11,),
 
                   TextField(
-                  controller: inController,
+                  controller: agController,
                   decoration: InputDecoration(
-                  label: Text('Enter your Height(in Inch)'),
+                  label: Text('Enter your Age'),
                   prefixIcon: Icon(Icons.height)
                   ),
                   keyboardType: TextInputType.number,
@@ -76,18 +76,18 @@ class _BMICalculaterState extends State<BMICalculater> {
               ElevatedButton(onPressed: (){
                 var wt = wtController.text.toString();
                 var ft = ftController.text.toString();
-                var inch = inController.text.toString();
+                var age = agController.text.toString();
 
-                if(wt!="" && ft!="" && inch!=""){
+                if(wt!="" && ft!="" && age!=""){
 
               // BMI CALCULATION
 
 
           var iWt = int.parse(wt);
           var iFt = int.parse(ft);
-          var iInch = int.parse(inch);
+          var iAge = int.parse(age);
 
-          var tInch = (iFt*12) + iInch;
+          var tInch = (iFt*12) + iAge;
 
           var tCm = tInch*2.54;
 
