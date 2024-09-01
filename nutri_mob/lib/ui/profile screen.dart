@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nutri_mob/model/meal.dart';
 class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -102,6 +103,7 @@ class ProfileScreen extends StatelessWidget {
     child: SingleChildScrollView(
     child: Row(
     children: <Widget>[
+      for
 
     ],
     ),
@@ -131,5 +133,31 @@ class ProfileScreen extends StatelessWidget {
        ]
      ),
    );
+  }
+}
+
+class _MealCard extends StatelessWidget {
+
+  final Meal meal;
+  const _MealCard({ Key key,  @required this.meal}) : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Container (
+      margin: const EdgeInsets.only(right: 20,bottom: 10),
+      child: Material(
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+        elevation: 4,
+        child: Column(
+          children: <Widget>[
+            Expanded(
+                child: Image.asset),
+      ),
+      Expanded(child: Column()),
+
+          ],
+        ),
+      ),
+    );
+
   }
 }
