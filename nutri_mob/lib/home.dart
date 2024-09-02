@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'User.dart'; // Import your UserProfileScreen here
 import 'AboutUs.dart'; // Import the AboutUsPage here
@@ -15,6 +17,8 @@ class _HomeScreenState extends State<HomeScreen> {
   late PageController _pageController;
   late Timer _timer;
   int _currentPage = 0;
+  String? _userName;
+  String? _userEmail;
 
   final List<String> _quotes = [
     '“Health is wealth.”',
@@ -41,6 +45,24 @@ class _HomeScreenState extends State<HomeScreen> {
         curve: Curves.easeInOut,
       );
     });
+
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      setState(() {
+        _userName = userDoc.get('name');
+        _userEmail = user.email;
+      });
+    }
   }
 
   @override
@@ -77,8 +99,8 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
-              accountName: const Text('User Name'),
-              accountEmail: const Text('user@example.com'),
+              accountName: Text(_userName ?? 'User Name'),
+              accountEmail: Text(_userEmail ?? 'user@example.com'),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
                 child: Icon(Icons.person, size: 50, color: Color(0xFF00B2A9)),
@@ -138,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),
               ),
               child: Text(
-                'Welcome Back, User!',
+                'Welcome Back, ${_userName ?? 'User'}!',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
