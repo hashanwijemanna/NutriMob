@@ -70,6 +70,34 @@ class ProfileScreen extends StatelessWidget {
              ),
              child: Container(
                color: Colors.white,
+               padding: const EdgeInsets.only(top: 40, left: 32, right: 16, bottom: 10 ),
+               child: Column(
+                 crossAxisAlignment: CrossAxisAlignment.start,
+                 children: <Widget>[
+                   ListTile(
+                     title: Text("Date, Year",
+                       style: TextStyle(
+                       fontWeight: FontWeight.w400,
+                       fontSize: 14,
+                     ),
+                     ),
+                     subtitle: Text(" Hello, name " ,
+                       style: TextStyle(
+                       fontWeight: FontWeight.w800,
+                       fontSize: 18,
+                         color: Colors.black,
+                     ),
+                     ),
+
+                     trailing: ClipOval(child:Image.asset("assets/User.png "),
+
+                     ),
+               _RadialProgress(
+                 width: height * 0.2,
+                 height: height * 0.2,
+               ),
+                 ],
+               ),
              ),
            ),
          ),
@@ -120,7 +148,6 @@ class ProfileScreen extends StatelessWidget {
     Expanded(
     child: Container(
     color: Colors.redAccent,
-    child: ,
     ),
     ),
 
@@ -233,6 +260,26 @@ class ProfileScreen extends StatelessWidget {
    );
   }
 }
+
+ class _RadiaProgress extends StatelessWidget {
+final double height, width;
+  
+const _RadiaProgress({Key key, this.height, this.width}) : super (key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: _RadiaProgress( progress: 0.7),
+      child: Container(
+        height: height,
+        width: width,
+        color: Colors.grey,
+      ),
+    );
+
+  }
+ }
+class _RadiaPainter 
 
 class _MealCard extends StatelessWidget {
 

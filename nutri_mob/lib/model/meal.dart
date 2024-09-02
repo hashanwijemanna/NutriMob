@@ -32,10 +32,4 @@ final meals = [
     imagePath: "assets/a3af2ecd96d0219a679cce127b49f29a.jpg",
 ),
 
-
-
-
-
-
-),
 ];
