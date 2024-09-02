@@ -147,14 +147,27 @@ class ProfileScreen extends StatelessWidget {
         SizedBox(width: 20,),
           Padding(
             padding: const EdgeInsets.only(top: 16.0, left: 16),
-            child: Text("YOUR NEXT WORKOUT", style: TextStyle(
+            child: Text("YOUR NEXT WORKOUT",
+              style: TextStyle(
                     color: Colors.white70,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
 
-                  ),),
+                  ),
+            ),
           ),
-          Text("UPPER BODY"),
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0,left: 16),
+            child: Text(
+              "Upper Body",
+              style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.w800,
+
+            ),
+            ),
+          ),
           Expanded(
               child: Row(
             children: <Widget>[
@@ -166,7 +179,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 padding: const EdgeInsets.all(10),
                 child: Image.asset(
-                " ",
+                "assets/imagesCHEST.png ",
                 width: 50,
                 height: 50,
                 color: Colors.white,
@@ -182,7 +195,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 padding: const EdgeInsets.all(10),
                 child: Image.asset(
-                  " ",
+                  " assets/back.webp",
                   width: 50,
                   height: 50,
                   color: Colors.white,
@@ -196,7 +209,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 padding: const EdgeInsets.all(10),
                   child: Image.asset(
-                " ",
+                " assets/Wide-grip-lat-pull-down-1.gif",
                     width: 50,
                     height: 50,
                     color: Colors.white,
