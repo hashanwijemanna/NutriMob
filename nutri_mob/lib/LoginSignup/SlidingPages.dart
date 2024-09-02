@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nutri_mob/BMI%20CAL.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:nutri_mob/BMI CAL.dart'; // Make sure this import is correct
 
 class SlidingPages extends StatefulWidget {
   @override
@@ -14,17 +13,28 @@ class _SlidingPagesState extends State<SlidingPages> {
   @override
   void initState() {
     super.initState();
-    // Initialize your resources here, but avoid context-dependent operations
+    _startAutoSlide();
+  }
+
+  void _startAutoSlide() {
+    Future.delayed(Duration(seconds: 8)).then((_) {
+      if (_pageController.hasClients && _currentPage < 2) {
+        _pageController.animateToPage(
+          _currentPage + 1,
+          duration: Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+        ).then((_) {
+          // Restart auto-slide after animation completes
+          _startAutoSlide();
+        });
+      }
+    });
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Safe to use context here
-    // Preload images
-    precacheImage(AssetImage('assets/welcome.gif'), context);
-    precacheImage(AssetImage('assets/Track.gif'), context);
-    precacheImage(AssetImage('assets/Achieve.gif'), context);
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -38,150 +48,121 @@ class _SlidingPagesState extends State<SlidingPages> {
               setState(() {
                 _currentPage = page;
               });
+              _startAutoSlide(); // Restart auto-slide on page change
             },
             children: [
               buildPage(
-                imagePath: 'assets/welcome.gif',
-                gradientColors: [Colors.orange.shade200, Colors.deepOrange.shade400],
-                text: 'Welcome to NutriMob',
+                backgroundImage: 'assets/background1.gif',
+                title: 'Welcome to NutriMob',
+                description: 'Easily track your nutrition and health goals.',
               ),
               buildPage(
-                imagePath: 'assets/Track.gif',
-                gradientColors: [Colors.lightGreen.shade300, Colors.green.shade600],
-                text: 'Track Your Nutrition',
+                backgroundImage: 'assets/background2.gif',
+                title: 'Monitor Your Progress',
+                description: 'Stay on top of your diet with detailed progress tracking.',
               ),
               buildPage(
-                imagePath: 'assets/Achieve.gif',
-                gradientColors: [Colors.lightBlue.shade300, Colors.blue.shade600],
-                text: 'Achieve Your Goals',
+                backgroundImage: 'assets/background3.gif',
+                title: 'Achieve Your Goals',
+                description: 'Get personalized recommendations tailored for your success.',
               ),
             ],
           ),
-          buildNavigationButtons(context),
           Positioned(
             bottom: 80,
             left: 0,
             right: 0,
             child: Center(
-              child: SmoothPageIndicator(
-                controller: _pageController,
-                count: 3,
-                effect: WormEffect(
-                  dotColor: Colors.white.withOpacity(0.5),
-                  activeDotColor: Colors.white,
-                  dotHeight: 12,
-                  dotWidth: 12,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(3, (index) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                    width: _currentPage == index ? 12.0 : 8.0,
+                    height: _currentPage == index ? 12.0 : 8.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: _currentPage == index ? Colors.blueAccent : Colors.grey,
+                    ),
+                  );
+                }),
               ),
             ),
           ),
+          if (_currentPage == 2)
+            Positioned(
+              right: 16,
+              bottom: 16,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BMICalculater(), // Navigate to BMICalculater
+                    ),
+                  );
+                },
+                child: Text('Get Started'),
+              ),
+            ),
         ],
       ),
     );
   }
 
   Widget buildPage({
-    required String imagePath,
-    required List<Color> gradientColors,
-    required String text,
+    required String backgroundImage,
+    required String title,
+    required String description,
   }) {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: gradientColors,
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
         image: DecorationImage(
-          image: AssetImage(imagePath),
+          image: AssetImage(backgroundImage),
           fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(
-            Colors.black.withOpacity(0.3),
-            BlendMode.darken,
-          ),
         ),
       ),
-      child: Center(
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            shadows: [
-              Shadow(
-                blurRadius: 10.0,
-                color: Colors.black54,
-                offset: Offset(2.0, 2.0),
-              ),
-            ],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              color: Colors.lightGreenAccent,
+              fontSize: 36,
+              fontWeight: FontWeight.bold,
+              shadows: [
+                Shadow(
+                  offset: Offset(0, 2),
+                  blurRadius: 6,
+                  color: Colors.black.withOpacity(0.7),
+                ),
+              ],
+            ),
+            textAlign: TextAlign.center,
           ),
-        ),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Text(
+              description,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+                shadows: [
+                  Shadow(
+                    offset: Offset(0, 1),
+                    blurRadius: 4,
+                    color: Colors.black.withOpacity(0.6),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
-  }
-
-  Widget buildNavigationButtons(BuildContext context) {
-    return Stack(
-      children: [
-        if (_currentPage > 0)
-          Positioned(
-            left: 16,
-            bottom: 16,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrange,
-              ),
-              onPressed: () {
-                _pageController.previousPage(
-                  duration: Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              },
-              child: Text('Previous'),
-            ),
-          ),
-        if (_currentPage < 2)
-          Positioned(
-            right: 16,
-            bottom: 16,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepOrange,
-              ),
-              onPressed: () {
-                _pageController.nextPage(
-                  duration: Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              },
-              child: Text('Next'),
-            ),
-          ),
-        if (_currentPage == 2)
-          Positioned(
-            right: 16,
-            bottom: 16,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-              ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => BMICalculater()),
-                );
-              },
-              child: Text('Finish'),
-            ),
-          ),
-      ],
-    );
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
   }
 }

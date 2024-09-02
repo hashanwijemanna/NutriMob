@@ -99,6 +99,10 @@ flutter:
     - assets/person2.jpg
     - assets/person3.png
     - assets/AboutUsBack.gif
+    - assets/background1.gif
+    - assets/welcome.gif
+    - assets/background2.gif
+    - assets/background3.gif
 
   #   - images/a_dot_ham.jpeg
 

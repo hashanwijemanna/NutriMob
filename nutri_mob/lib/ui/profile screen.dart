@@ -79,7 +79,7 @@ class ProfileScreen extends StatelessWidget {
     right: 0,
     child: Container(
 
-    height: height,
+    height: height * 0.50,
     child: Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
@@ -101,9 +101,16 @@ class ProfileScreen extends StatelessWidget {
     ),
     Expanded(
     child: SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
     child: Row(
     children: <Widget>[
-      for
+      SizedBox(
+    width: 32,
+    ),
+      for (int i = 0; i< meals.length; i++)
+        _MealCard
+    (meal: meals[i]),
+
 
     ],
     ),
@@ -117,11 +124,89 @@ class ProfileScreen extends StatelessWidget {
     ),
     ),
 
+    SizedBox(height: 20,
+    ),
     Expanded(
     child: Container(
-    color: Colors.blueAccent,
-
+      margin: const EdgeInsets.only(bottom: 10, left: 32,
+      right: 32),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.all(Radius.circular(30)) ,
+    gradient: LinearGradient(
+      begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      const Color(0XFF20008B),
+      const Color(0XFF200087),
+    ],
     ),
+    ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+        SizedBox(width: 20,),
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0, left: 16),
+            child: Text("YOUR NEXT WORKOUT", style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+
+                  ),),
+          ),
+          Text("UPPER BODY"),
+          Expanded(
+              child: Row(
+            children: <Widget>[
+              SizedBox(width: 20,),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(25)),
+                  color:  const Color(0xFF5B4D9D),
+                ),
+                padding: const EdgeInsets.all(10),
+                child: Image.asset(
+                " ",
+                width: 50,
+                height: 50,
+                color: Colors.white,
+              ),
+              ),
+              SizedBox(
+                width: 10,),
+
+              Container(
+                decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(25)),
+                color:  const Color(0xFF5B4D9D),
+                ),
+                padding: const EdgeInsets.all(10),
+                child: Image.asset(
+                  " ",
+                  width: 50,
+                  height: 50,
+                  color: Colors.white,
+                ),),
+              SizedBox(width: 10,),
+
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(25)),
+                color:  const Color(0xFF5B4D9D),
+                ),
+                padding: const EdgeInsets.all(10),
+                  child: Image.asset(
+                " ",
+                    width: 50,
+                    height: 50,
+                    color: Colors.white,
+                  ),),
+              SizedBox(
+                width: 10,),
+            ],
+          )
+        ],
+      ),
     ),
 
 
@@ -143,16 +228,82 @@ class _MealCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container (
-      margin: const EdgeInsets.only(right: 20,bottom: 10),
+      margin: const EdgeInsets.only(
+          right: 20,
+          bottom: 10),
       child: Material(
         borderRadius: BorderRadius.all(Radius.circular(20)),
         elevation: 4,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.max,
           children: <Widget>[
-            Expanded(
-                child: Image.asset),
+            Flexible(
+              fit: FlexFit.tight,
+                child: clipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(20) ),
+                child: Image.asset(
+                  meal.imagePath,
+                  width: 150,
+                  fit: BoxFit.fill,
+                ),
       ),
-      Expanded(child: Column()),
+            ),
+      Flexible(
+        fit: FlexFit.tight,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(height: 5),
+
+
+            Text(meal.mealTime,
+              style: const TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 14,
+              color: Colors.blueGrey,
+            ),
+            ),
+
+
+            Text(meal.name,  style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 18,
+                color: Colors.black,
+            ),),
+
+
+
+            Text("${meal.kiloCaloriesBurnt} kcal", style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+                color: Colors.blueGrey,
+            ),),
+            Row(
+              children:<Widget>[
+                Icon(Icons.access_time,
+                  size: 15 ,
+                  color: Colors.black12,),
+
+
+SizedBox( width: 4,),
+            Text("${meal.timeTaken} min", style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    color: Colors.blueGrey,
+                ),),
+              ],
+            ),
+            SizedBox(height: 16) ,
+              ],
+
+
+
+                  ),
+          )),
 
           ],
         ),
