@@ -1,53 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class TextFieldInput extends StatelessWidget {
   final TextEditingController textEditingController;
-  final bool isPass;
   final String hintText;
   final IconData icon;
+  final bool obscureText;
+  final bool isPass;
+  final Color? backgroundColor;
 
   const TextFieldInput({
-    super.key,
+    Key? key,
     required this.textEditingController,
-     this.isPass = false,
     required this.hintText,
     required this.icon,
-    required bool obscureText,
-  });
+    required this.obscureText,
+    this.isPass = false,
+    this.backgroundColor, // Add this line
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextField(
-        obscureText: isPass,
         controller: textEditingController,
+        obscureText: obscureText,
         decoration: InputDecoration(
+          filled: true,
+          fillColor: backgroundColor ?? Colors.grey[200], // Use backgroundColor if provided
           hintText: hintText,
-        hintStyle: TextStyle(
-          color: Colors.black45,
-          fontSize: 18,
-        ),
-        prefixIcon: Icon(
-          icon,
-          color: Colors.black45,
-        ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20,),
-        border: InputBorder.none,
-        filled: true,
-        fillColor: Color(0xFFedf0f8),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.circular(30),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(
-            width: 2,
-            color: Colors.blue,
+          prefixIcon: Icon(icon, color: Colors.grey),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
           ),
-          borderRadius: BorderRadius.circular(30),
         ),
-      ),
+        style: GoogleFonts.lexend(
+          fontSize: 16,
+          color: Colors.black,
+        ),
       ),
     );
   }
