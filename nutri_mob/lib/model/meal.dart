@@ -24,6 +24,13 @@ final meals = [
       timeTaken: "8",
       imagePath: "assets/how-to-make-soft-boiled-eggs-4.jpg",
 ),
+  Meal(
+    mealTime: "Beakfast",
+    name: "Greek Yogurt with Honey",
+    kiloCaloriesBurnt: "150",
+    timeTaken: "8",
+    imagePath: "assets/a3af2ecd96d0219a679cce127b49f29a.jpg",
+),
 
 
 
