@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nutri_mob/LoginSignup/Services/authentication.dart';
 import 'package:nutri_mob/LoginSignup/SlidingPages.dart';
 import 'package:nutri_mob/LoginSignup/Widget/snack_bar.dart';
 import 'login.dart';
-import 'Widget/text_field.dart'; // Ensure this file exists and is correctly implemented
+import 'Widget/text_field.dart';
 import 'Widget/button.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -14,17 +15,17 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  // Controllers for text fields
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController nameController = TextEditingController();
   bool isLoading = false;
 
-  void depose() {
-    super.dispose();
+  @override
+  void dispose() {
     emailController.dispose();
     passwordController.dispose();
     nameController.dispose();
+    super.dispose();
   }
 
   void signUpUser() async {
@@ -39,7 +40,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (res == "Success") {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => SlidingPages(),//LoginScreen(),
+          builder: (context) => SlidingPages(),
         ),
       );
     } else {
@@ -53,7 +54,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   void signUp() async {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(
-        builder: (context) => SlidingPages(),//LoginScreen(),
+        builder: (context) => SlidingPages(),
       ),
     );
   }
@@ -62,53 +63,70 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white, // Set the background color to white
       body: SafeArea(
         child: SingleChildScrollView(
-          child: SizedBox(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
                   width: double.infinity,
                   height: height / 2.8,
-                  child: Image.asset("assets/SignUp.png"),
+                  child: Image.asset("assets/liz-gross-signup-1.gif"),
                 ),
+                Text(
+                  'Sign Up',
+                  style: GoogleFonts.lexend(
+                    fontSize: 36,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 20),
                 TextFieldInput(
                   textEditingController: nameController,
                   hintText: "Enter your name",
                   icon: Icons.person,
                   obscureText: false,
+                  backgroundColor: Colors.grey[200], // Set background color for text fields
                 ),
+                const SizedBox(height: 20),
                 TextFieldInput(
                   textEditingController: emailController,
                   hintText: "Enter your email",
                   icon: Icons.email,
                   obscureText: false,
+                  backgroundColor: Colors.grey[200],
                 ),
+                const SizedBox(height: 20),
                 TextFieldInput(
                   textEditingController: passwordController,
                   hintText: "Enter your password",
                   isPass: true,
                   icon: Icons.lock,
                   obscureText: true,
+                  backgroundColor: Colors.grey[200],
                 ),
+                const SizedBox(height: 30),
                 MyButton(
-                  //onTap: signUpUser,
                   onTap: signUp,
                   text: "Sign Up",
                   isLoading: isLoading,
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF56CCF2), Color(0xFF2F80ED)],
+                  ),
                 ),
-                SizedBox(
-                  height: height / 15,
-                ),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       "Already have an account?",
-                      style: TextStyle(
+                      style: GoogleFonts.lexend(
                         fontSize: 16,
+                        color: Colors.black,
                       ),
                     ),
                     GestureDetector(
@@ -120,9 +138,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         );
                       },
-                      child: const Text(
+                      child: Text(
                         " Login",
-                        style: TextStyle(
+                        style: GoogleFonts.lexend(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                           color: Colors.blue,
@@ -131,6 +149,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 40),
               ],
             ),
           ),

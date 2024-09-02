@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:nutri_mob/LoginSignup/PasswordForgot/forgot_password.dart';
 import 'package:nutri_mob/LoginSignup/Services/authentication.dart';
 import 'package:nutri_mob/LoginSignup/Widget/button.dart';
@@ -79,33 +80,64 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             SizedBox(
               width: double.infinity,
-              height: height / 2.7,
-              child: Image.asset("assets/Login.png"),
+              height: height / 2.5,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    "assets/login.gif",
+                    fit: BoxFit.cover,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.black.withOpacity(0.4), Colors.black.withOpacity(0)],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                    ),
+                  ),
+                  Center(
+                    child: Text(
+                      'Login',
+                      style: GoogleFonts.lexend(
+                        fontSize: 36,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    TextFieldInput(
-                      textEditingController: emailController,
-                      hintText: "Enter your email",
-                      icon: Icons.email,
-                      obscureText: false,
-                    ),
-                    TextFieldInput(
-                      isPass: true,
-                      textEditingController: passwordController,
-                      hintText: "Enter your password",
-                      icon: Icons.lock,
-                      obscureText: true,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 35),
-                      child: Align(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 20),
+                      TextFieldInput(
+                        textEditingController: emailController,
+                        hintText: "Enter your email",
+                        icon: Icons.email,
+                        obscureText: false,
+                        backgroundColor: Colors.grey[200],
+                      ),
+                      const SizedBox(height: 20),
+                      TextFieldInput(
+                        isPass: true,
+                        textEditingController: passwordController,
+                        hintText: "Enter your password",
+                        icon: Icons.lock,
+                        obscureText: true,
+                        backgroundColor: Colors.grey[200],
+                      ),
+                      Align(
                         alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          onTap: () {
+                        child: TextButton(
+                          onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -113,9 +145,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             );
                           },
-                          child: const Text(
+                          child: Text(
                             "Forgot Password?",
-                            style: TextStyle(
+                            style: GoogleFonts.lexend(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                               color: Colors.blue,
@@ -123,53 +155,69 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                       ),
-                    ),
-                    MyButton(
-                      onTap: loginUsers,
-                      text: "Log In",
-                      isLoading: isLoading,
-                    ),
-                    SizedBox(
-                      height: height / 15,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          "Don't have an account?",
-                          style: TextStyle(
-                            fontSize: 16,
-                          ),
+                      const SizedBox(height: 20),
+                      MyButton(
+                        onTap: loginUsers,
+                        text: "Log In",
+                        isLoading: isLoading,
+                        gradient: LinearGradient(
+                          colors: [Color(0xFF56CCF2), Color(0xFF2F80ED)],
                         ),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const SignUpScreen(),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            " Sign Up",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
+                      ),
+                      const SizedBox(height: 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Don't have an account?",
+                            style: GoogleFonts.lexend(
                               fontSize: 16,
-                              color: Colors.blue,
                             ),
                           ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const SignUpScreen(),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              " Sign Up",
+                              style: GoogleFonts.lexend(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 30),
+                      GestureDetector(
+                        onTap: signInWithGoogle,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          padding: const EdgeInsets.all(8),
+                          child: Image.asset('assets/google_logo.png', height: 50),
                         ),
-                      ],
-                    ),
-                  ],
+                      ),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GestureDetector(
-                onTap: signInWithGoogle,
-                child: Image.asset('assets/google_logo.png', height: 70), // Use your image path here
               ),
             ),
           ],
