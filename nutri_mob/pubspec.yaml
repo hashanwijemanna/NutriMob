@@ -103,6 +103,11 @@ flutter:
     - assets/welcome.gif
     - assets/background2.gif
     - assets/background3.gif
+    - assets/rule1.gif
+    - assets/rule2.gif
+    - assets/rule3.gif
+    - assets/rule4.gif
+    - assets/rule5.gif
 
   #   - images/a_dot_ham.jpeg
 
