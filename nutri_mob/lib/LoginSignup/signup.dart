@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nutri_mob/LoginSignup/Services/authentication.dart';
-import 'package:nutri_mob/LoginSignup/SlidingPages.dart';
 import 'package:nutri_mob/LoginSignup/Widget/snack_bar.dart';
+import 'package:nutri_mob/LoginSignup/SlidingPages.dart';
 import 'login.dart';
 import 'Widget/text_field.dart';
 import 'Widget/button.dart';
