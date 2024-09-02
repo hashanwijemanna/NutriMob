@@ -5,14 +5,14 @@ class MyButton extends StatelessWidget {
   final VoidCallback onTap;
   final String text;
   final bool isLoading;
-  final Gradient? gradient; // Add this line
+  final Gradient? gradient;
 
   const MyButton({
     Key? key,
     required this.onTap,
     required this.text,
     this.isLoading = false,
-    this.gradient, // Add this line
+    this.gradient,
   }) : super(key: key);
 
   @override
@@ -25,6 +25,7 @@ class MyButton extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: gradient ?? const LinearGradient(colors: [Colors.blue, Colors.lightBlueAccent]),
           borderRadius: BorderRadius.circular(12),
+          color: gradient == null ? Colors.blue : null, // Ensures backgroundColor is set when gradient is null
         ),
         alignment: Alignment.center,
         child: isLoading
