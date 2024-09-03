@@ -13,7 +13,7 @@ class BMICalculater extends StatefulWidget {
 class _BMICalculaterState extends State<BMICalculater> {
   var wtController = TextEditingController();
   var htController = TextEditingController();
-  var agController = TextEditingController();
+  DateTime? selectedDateOfBirth;
   var allergiesController = TextEditingController();
   var foodItemsController = TextEditingController();
 
@@ -78,11 +78,7 @@ class _BMICalculaterState extends State<BMICalculater> {
                     icon: Icons.height,
                   ),
                   SizedBox(height: 16),
-                  _buildTextField(
-                    controller: agController,
-                    label: 'Age',
-                    icon: Icons.person,
-                  ),
+                  _buildDatePicker(),
                   SizedBox(height: 16),
                   _buildTextField(
                     controller: allergiesController,
@@ -102,14 +98,13 @@ class _BMICalculaterState extends State<BMICalculater> {
                     onPressed: () async {
                       var wt = wtController.text.toString();
                       var ht = htController.text.toString();
-                      var age = agController.text.toString();
+                      var dob = selectedDateOfBirth;
                       var allergies = allergiesController.text.toString();
                       var foodItems = foodItemsController.text.toString();
 
-                      if (wt.isNotEmpty && ht.isNotEmpty && age.isNotEmpty) {
+                      if (wt.isNotEmpty && ht.isNotEmpty && dob != null) {
                         var iWt = int.parse(wt);
                         var iht = int.parse(ht);
-                        var iAge = int.parse(age);
 
                         var tM = iht / 100;
                         var bmi = iWt / (tM * tM);
@@ -121,7 +116,7 @@ class _BMICalculaterState extends State<BMICalculater> {
                           Map<String, dynamic> userData = {
                             "weight": iWt,
                             "height": iht,
-                            "age": iAge,
+                            "date_of_birth": dob.toIso8601String(),
                             "bmi": bmi.toStringAsFixed(2),
                             "email": email,
                           };
@@ -199,6 +194,38 @@ class _BMICalculaterState extends State<BMICalculater> {
         ),
       ),
       keyboardType: TextInputType.text,
+    );
+  }
+
+  Widget _buildDatePicker() {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            selectedDateOfBirth == null
+                ? 'Select Date of Birth'
+                : 'Date of Birth: ${selectedDateOfBirth!.toLocal().toString().split(' ')[0]}',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+        ),
+        IconButton(
+          icon: Icon(Icons.calendar_today),
+          onPressed: () async {
+            DateTime? pickedDate = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime(1900),
+              lastDate: DateTime.now(),
+            );
+
+            if (pickedDate != null && pickedDate != selectedDateOfBirth) {
+              setState(() {
+                selectedDateOfBirth = pickedDate;
+              });
+            }
+          },
+        ),
+      ],
     );
   }
 
