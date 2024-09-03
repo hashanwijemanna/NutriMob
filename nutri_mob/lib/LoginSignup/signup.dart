@@ -111,7 +111,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 const SizedBox(height: 30),
                 MyButton(
-                  onTap: signUp,
+                  onTap: signUpUser,
                   text: "Sign Up",
                   isLoading: isLoading,
                   gradient: const LinearGradient(
