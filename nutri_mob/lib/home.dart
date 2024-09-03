@@ -2,9 +2,13 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'User.dart'; // Import your UserProfileScreen here
-import 'AboutUs.dart'; // Import the AboutUsPage here
-import 'Rules.dart'; // Import RulesAndRegulationsPage
+import 'User.dart';
+import 'AboutUs.dart';
+import 'Rules.dart';
+import 'BMIA.dart';
+import 'DietPlan.dart';
+import 'Notifications.dart';
+import 'package:nutri_mob/LoginSignup/login.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -112,33 +116,47 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildDrawerItem(Icons.person, 'User Profile', () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const UserProfileScreen()),
+                MaterialPageRoute(builder: (context) => UserProfileScreen()),
               );
             }),
             _buildDrawerItem(Icons.fitness_center, 'BMI Analysis', () {
-              // Handle navigation to BMI Analysis
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => BMIAnalysisPage()),
+              );
             }),
             _buildDrawerItem(Icons.restaurant_menu, 'Diet Plan', () {
-              // Handle navigation to Diet Plan
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => DietPlanPage()),
+              );
             }),
+
             _buildDrawerItem(Icons.notifications, 'Notifications', () {
-              // Handle navigation to Notifications
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => NotificationsPage()),
+              );
             }),
             _buildDrawerItem(Icons.info, 'About Us', () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AboutUsPage()),
+                MaterialPageRoute(builder: (context) => AboutUsPage()),
               );
             }),
             _buildDrawerItem(Icons.rule, 'Rules & Regulations', () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const RulesAndRegulationsPage()),
+                MaterialPageRoute(builder: (context) => RulesAndRegulationsPage()),
               );
             }),
             const Divider(),
-            _buildDrawerItem(Icons.logout, 'Logout', () {
-              // Handle logout
+            _buildDrawerItem(Icons.logout, 'Logout', () async {
+              await FirebaseAuth.instance.signOut(); // Sign out from Firebase
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+              );
             }),
           ],
         ),
