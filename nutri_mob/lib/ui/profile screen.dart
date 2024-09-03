@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:nutri_mob/model/meal.dart';
+import 'package:nutri_mob/ui/meal_detail_screen.dart';
 import 'package:nutri_mob/ui/workout_screen.dart';
 import 'package:vector_math/vector_math_64.dart'as math;
 import "package:intl/intl.dart";
@@ -466,7 +467,8 @@ class _MealCard extends StatelessWidget {
     return Container (
       margin: const EdgeInsets.only(
           right: 20,
-          bottom: 10),
+          bottom: 10
+          ),
       child: Material(
         borderRadius: BorderRadius.all(Radius.circular(20)),
         elevation: 4,
@@ -474,17 +476,27 @@ class _MealCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.max,
           children: <Widget>[
-            Flexible(
-              fit: FlexFit.tight,
-                child: clipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(20) ),
-                child: Image.asset(
-                  meal.imagePath,
-                  width: 150,
-                  fit: BoxFit.fill,
-                ),
-      ),
-            ),
+       Flexible(
+                fit: FlexFit.tight,
+                   child: OpenContainer(
+  transitionDuration: const Duration(milliseconds: 1000),
+                     openBuilder: (context, _) {
+    return MealDetailScreen(
+    meal: meal,
+    );
+  },
+  closedBuilder: (context, openContainer) {(
+                     return: GestureDetector(
+                       onTap: openContainer,
+                   child: clipRRect(
+                    borderRadius: BorderRadius.all(Radius.circular(20) ),
+                  child: Image.asset(
+                    meal.imagePath,
+                    width: 150,
+                    fit: BoxFit.fill,
+                  ),
+                    ),
+  ),
       Flexible(
         fit: FlexFit.tight,
           child: Padding(
@@ -525,7 +537,7 @@ class _MealCard extends StatelessWidget {
                   color: Colors.black12,),
 
 
-SizedBox( width: 4,),
+      SizedBox( width: 4,),
             Text("${meal.timeTaken} min", style: const TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 14,
@@ -543,8 +555,10 @@ SizedBox( width: 4,),
 
           ],
         ),
-      ),
-    );
+      );
 
   }
+}
+
+class MealDetailScreen {
 }
