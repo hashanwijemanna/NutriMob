@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:nutri_mob/model/meal.dart';
+import 'package:vector_math/vector_math_64.dart'as math;
+import "package:intl/intl.dart";
+
+
 class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
    final height = MediaQuery.of(context).size.height;
+   final today = DateTime.now();
 
    return Scaffold(
      backgroundColor: const Color(0xFFE9E9E9),
@@ -75,16 +80,17 @@ class ProfileScreen extends StatelessWidget {
                  crossAxisAlignment: CrossAxisAlignment.start,
                  children: <Widget>[
                    ListTile(
-                     title: Text("Date, Year",
+                     title: Text(
+                 "${DateFormat("EEEE").FORMAT(today)}, ${DateFormat("d MMMM").format(today)}",
                        style: TextStyle(
                        fontWeight: FontWeight.w400,
-                       fontSize: 14,
+                       fontSize: 18,
                      ),
                      ),
                      subtitle: Text(" Hello, name " ,
                        style: TextStyle(
                        fontWeight: FontWeight.w800,
-                       fontSize: 18,
+                       fontSize: 26,
                          color: Colors.black,
                      ),
                      ),
@@ -92,9 +98,19 @@ class ProfileScreen extends StatelessWidget {
                      trailing: ClipOval(child:Image.asset("assets/User.png "),
 
                      ),
+               SizedBox(
+                 height: 10,
+               ),
+               Row(
+                 children: <Widget>[
                _RadialProgress(
-                 width: height * 0.2,
-                 height: height * 0.2,
+                 width: height * 0.18,
+                 height: height * 0.18,
+                 progress: 0.7,
+               ),
+       Column()
+
+     ),
                ),
                  ],
                ),
@@ -260,26 +276,119 @@ class ProfileScreen extends StatelessWidget {
    );
   }
 }
+class _IngredientProcess extends StatelessWidget {
+  final String ingredient;
+  final double leftAmount;
+  final double progress;
+  final Color progressColor;
 
+  const _IngredientProcess({required Key key, required this.ingredient, required this.leftAmount, required this.progress,
+  required this.progressColor}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Text(ingredient.toUpperCase(),
+          style: TextStyle(
+          fontSize: 14,
+            fontWeight: FontWeight.w700,
+        ),
+        ),
+        Row(
+          children: <Widget>[
+            Container(
+              height: 10,
+              decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(5))),
+              color: Colors.grey,
+            ),
+            Text("${ leftAmount}g left"),
+
+          ],
+        )
+      ],
+    );
+  }
+}
+
+
+
+
+class _RadialProgress {
+}
  class _RadiaProgress extends StatelessWidget {
-final double height, width;
+final double height, width, progress;
   
-const _RadiaProgress({Key key, this.height, this.width}) : super (key: key);
+const _RadiaProgress({required Key key, required this.height, required this.width, required this.progress}) : super (key: key);
 
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: _RadiaProgress( progress: 0.7),
+      painter: _RadialPainter (progress: 0.7,
+      ),
       child: Container(
         height: height,
         width: width,
-        color: Colors.grey,
-      ),
+        child: Center(
+    child: RichText(
+    textAlign: TextAlign.center,
+    text: TextSpan(
+    children: [
+      TextSpan( text: "1731",  style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF200087),
+
+                ),),
+                TextSpan(text: "\n"),
+                TextSpan(text: "kcal left ",style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFF200087),
+                ),
+                ),
+                ]
+                ),
+
+
+
+                  ),
+          ),
+        ),
     );
 
   }
  }
-class _RadiaPainter 
+class _RadialPainter extends CustomPainter {
+
+  final double progress;
+
+  _RadialPainter(this.progress, );
+  @override
+  void paint(Canvas canvas, Size size) {
+  Paint paint = Paint()
+    ..strokeWidth = 10
+      ..color = Color(0xff200087)
+    ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+  Offset center = Offset(size.width / 2, size.height / 2);
+  double relativeProgress = 360 * progress;
+    canvas.drawArc(Rect.fromCircle(center: center, radius: size.width/2),
+        math.radians(-90),
+    math.radians(-relativeProgress),
+    false,
+    paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+
+    return true;
+  }
+
+}
 
 class _MealCard extends StatelessWidget {
 
