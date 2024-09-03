@@ -8,6 +8,9 @@ class TextFieldInput extends StatelessWidget {
   final bool obscureText;
   final bool isPass;
   final Color? backgroundColor;
+  final Color borderColor;
+  final EdgeInsetsGeometry? padding;
+  final TextStyle? textStyle;
 
   const TextFieldInput({
     Key? key,
@@ -16,27 +19,47 @@ class TextFieldInput extends StatelessWidget {
     required this.icon,
     required this.obscureText,
     this.isPass = false,
-    this.backgroundColor, // Add this line
+    this.backgroundColor,
+    this.borderColor = Colors.grey, // Default border color
+    this.padding,
+    this.textStyle,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: padding ?? const EdgeInsets.symmetric(vertical: 10),
       child: TextField(
         controller: textEditingController,
         obscureText: obscureText,
         decoration: InputDecoration(
           filled: true,
-          fillColor: backgroundColor ?? Colors.grey[200], // Use backgroundColor if provided
+          fillColor: backgroundColor ?? Colors.grey[200],
           hintText: hintText,
           prefixIcon: Icon(icon, color: Colors.grey),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide.none,
+            borderSide: BorderSide(
+              color: borderColor,
+              width: 1,
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: borderColor,
+              width: 1,
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(
+              color: borderColor,
+              width: 2,
+            ),
           ),
         ),
-        style: GoogleFonts.lexend(
+        style: textStyle ?? GoogleFonts.lexend(
           fontSize: 16,
           color: Colors.black,
         ),
