@@ -97,6 +97,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         backgroundColor: Color(0xFF00B2A9), // Sea light blue
         elevation: 0,
+        iconTheme: const IconThemeData(
+          color: Colors.white,
+        ),
       ),
       drawer: Drawer(
         child: ListView(
