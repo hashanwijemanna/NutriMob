@@ -42,15 +42,30 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       FirebaseDatabase.instance.ref().child('users/${user.uid}/bioData');
       DataSnapshot bioData = await bioDataRef.get();
 
+      DateTime? dob;
+      if (bioData.child('date_of_birth').value != null) {
+        dob = DateTime.parse(bioData.child('date_of_birth').value.toString());
+      }
+
       setState(() {
         userName = userDoc['name'] ?? 'User Name';
         userEmail = user.email ?? 'user@example.com';
-        age = bioData.child('age').value.toString() + ' years';
+        age = dob != null ? _calculateAge(dob).toString() + ' years' : 'Age not available';
         height = bioData.child('height').value.toString() + ' cm';
         weight = bioData.child('weight').value.toString() + ' kg';
         bmi = bioData.child('bmi').value.toString();
       });
     }
+  }
+
+  int _calculateAge(DateTime dateOfBirth) {
+    final today = DateTime.now();
+    int age = today.year - dateOfBirth.year;
+    if (dateOfBirth.month > today.month ||
+        (dateOfBirth.month == today.month && dateOfBirth.day > today.day)) {
+      age--;
+    }
+    return age;
   }
 
   Future<void> _logout() async {
