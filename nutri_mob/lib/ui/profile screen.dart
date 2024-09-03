@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nutri_mob/model/meal.dart';
+import 'package:nutri_mob/ui/workout_screen.dart';
 import 'package:vector_math/vector_math_64.dart'as math;
 import "package:intl/intl.dart";
 
@@ -8,6 +9,7 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
    final height = MediaQuery.of(context).size.height;
+   final width = MediaQuery.of(context).size.width;
    final today = DateTime.now();
 
    return Scaffold(
@@ -81,7 +83,7 @@ class ProfileScreen extends StatelessWidget {
                  children: <Widget>[
                    ListTile(
                      title: Text(
-                 "${DateFormat("EEEE").FORMAT(today)}, ${DateFormat("d MMMM").format(today)}",
+                 "${DateFormat("EEEE").format(today)}, ${DateFormat("d MMMM").format(today)}",
                        style: TextStyle(
                        fontWeight: FontWeight.w400,
                        fontSize: 18,
@@ -104,11 +106,49 @@ class ProfileScreen extends StatelessWidget {
                Row(
                  children: <Widget>[
                _RadialProgress(
-                 width: height * 0.18,
-                 height: height * 0.18,
+                 width: width * 0.4,
+                 height: width * 0.4,
                  progress: 0.7,
                ),
-       Column()
+       SizedBox(
+         width: 10,
+       ),
+       Column(
+         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+         mainAxisSize: MainAxisSize.max,
+         crossAxisAlignment: CrossAxisAlignment.start,
+         children: <Widget>[
+          _IngredientProgress(
+               ingredient: "Protein",
+               leftAmount: 0.3,
+               progressColor: Colors.red,
+             leftAmount: 72,
+         width: width * 0.28,
+       ),
+                     SizedBox(
+                       height: 10,
+                     ),
+                     _IngredientProgress(
+                       ingredient: "Carbs",
+                       leftAmount: 0.2,
+                       progressColor: Colors.red,
+                       leftAmount: 252,
+                       width: width * 0.28,
+                     ),
+         SizedBox(
+           height: 10,
+         ),
+
+           _IngredientProgress(
+                       ingredient: "Fat",
+                       leftAmount: 0.1,
+                       progressColor: Colors.yellow,
+                       leftAmount: 61,
+                       width: width * 0.28,
+                     ),
+
+         ],
+       )
 
      ),
                ),
@@ -170,98 +210,106 @@ class ProfileScreen extends StatelessWidget {
     SizedBox(height: 20,
     ),
     Expanded(
-    child: Container(
-      margin: const EdgeInsets.only(bottom: 10, left: 32,
-      right: 32),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.all(Radius.circular(30)) ,
-    gradient: LinearGradient(
-      begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [
-      const Color(0XFF20008B),
-      const Color(0XFF200087),
-    ],
+    child: GestureDetector(
+    onTap: () {
+      Navigator.of(context).push(MaterialPageRoute(
+    builder: (context) => WorkoutScreen(),
     ),
-    ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-        SizedBox(width: 20,),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0, left: 16),
-            child: Text("YOUR NEXT WORKOUT",
-              style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+    );
+    },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10, left: 32,
+        right: 32),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(30)) ,
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        const Color(0XFF20008B),
+        const Color(0XFF200087),
+      ],
+      ),
+      ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+          SizedBox(width: 20,),
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0, left: 16),
+              child: Text("YOUR NEXT WORKOUT",
+                style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
 
-                  ),
+                    ),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 4.0,left: 16),
-            child: Text(
-              "Upper Body",
-              style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.w800,
-
-            ),
-            ),
-          ),
-          Expanded(
-              child: Row(
-            children: <Widget>[
-              SizedBox(width: 20,),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                  color:  const Color(0xFF5B4D9D),
-                ),
-                padding: const EdgeInsets.all(10),
-                child: Image.asset(
-                "assets/imagesCHEST.png ",
-                width: 50,
-                height: 50,
+            Padding(
+              padding: const EdgeInsets.only(top: 4.0,left: 16),
+              child: Text(
+                "Upper Body",
+                style: TextStyle(
                 color: Colors.white,
-              ),
-              ),
-              SizedBox(
-                width: 10,),
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
 
-              Container(
-                decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(25)),
-                color:  const Color(0xFF5B4D9D),
-                ),
-                padding: const EdgeInsets.all(10),
-                child: Image.asset(
-                  " assets/back.webp",
+              ),
+              ),
+            ),
+            Expanded(
+                child: Row(
+              children: <Widget>[
+                SizedBox(width: 20,),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                    color:  const Color(0xFF5B4D9D),
+                  ),
+                  padding: const EdgeInsets.all(10),
+                  child: Image.asset(
+                  "assets/imagesCHEST.png ",
                   width: 50,
                   height: 50,
                   color: Colors.white,
-                ),),
-              SizedBox(width: 10,),
-
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(25)),
-                color:  const Color(0xFF5B4D9D),
                 ),
-                padding: const EdgeInsets.all(10),
+                ),
+                SizedBox(
+                  width: 10,),
+
+                Container(
+                  decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(25)),
+                  color:  const Color(0xFF5B4D9D),
+                  ),
+                  padding: const EdgeInsets.all(10),
                   child: Image.asset(
-                " assets/Wide-grip-lat-pull-down-1.gif",
+                    " assets/back.webp",
                     width: 50,
                     height: 50,
                     color: Colors.white,
                   ),),
-              SizedBox(
-                width: 10,),
-            ],
-          )
-        ],
+                SizedBox(width: 10,),
+
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                  color:  const Color(0xFF5B4D9D),
+                  ),
+                  padding: const EdgeInsets.all(10),
+                    child: Image.asset(
+                  " assets/Wide-grip-lat-pull-down-1.gif",
+                      width: 50,
+                      height: 50,
+                      color: Colors.white,
+                    ),),
+                SizedBox(
+                  width: 10,),
+              ],
+            )
+          ],
+        ),
       ),
     ),
 
@@ -276,18 +324,22 @@ class ProfileScreen extends StatelessWidget {
    );
   }
 }
-class _IngredientProcess extends StatelessWidget {
+
+class _IngredientProgress {
+}
+class _IngredientProgress extends StatelessWidget {
   final String ingredient;
-  final double leftAmount;
-  final double progress;
+  final int leftAmount;
+  final double progress, width;
   final Color progressColor;
 
-  const _IngredientProcess({required Key key, required this.ingredient, required this.leftAmount, required this.progress,
-  required this.progressColor}) : super(key: key);
+  const _IngredientProgress({required Key key, required this.ingredient, required this.leftAmount, required this.progress,
+  required this.progressColor, required this.width}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text(ingredient.toUpperCase(),
           style: TextStyle(
@@ -296,23 +348,38 @@ class _IngredientProcess extends StatelessWidget {
         ),
         ),
         Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Container(
-              height: 10,
-              decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(5))),
-              color: Colors.grey,
+            Stack(
+              children: <Widget>[
+                Container(
+                  height: 10,
+                  width: width,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(5)),
+                  color: Colors.black12,
+                  ),
+                ),
+    Container(
+    height: 10,
+    width: width * progress,
+    decoration: BoxDecoration(
+    borderRadius: BorderRadius.all(Radius.circular(5)),
+    color: progressColor,
+    ),
+    ),
+              ],
             ),
-            Text("${ leftAmount}g left"),
-
+            SizedBox(width: 10,
+            ),
+           Text("${leftAmount}g left"),
           ],
         )
       ],
     );
   }
 }
-
-
-
 
 class _RadialProgress {
 }
