@@ -23,12 +23,20 @@ class _BMICalculaterState extends State<BMICalculater> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseDatabase _database = FirebaseDatabase.instance;
 
+  List<String> diseases = [
+    'Diabetes',
+    'Cardiovascular Diseases',
+    'Lactose Intolerance',
+    'Osteoporosis'
+  ];
+  List<String> selectedDiseases = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'BMI Calculator',
+          'Enter your details',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.blueGrey.shade800,
@@ -57,14 +65,6 @@ class _BMICalculaterState extends State<BMICalculater> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Enter your details',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.blueGrey.shade800,
-                    ),
-                  ),
                   SizedBox(height: 20),
                   _buildTextField(
                     controller: wtController,
@@ -95,6 +95,8 @@ class _BMICalculaterState extends State<BMICalculater> {
                     label: 'Food Items Recommended (if any)',
                     icon: Icons.local_dining,
                   ),
+                  SizedBox(height: 16),
+                  _buildDiseaseSelection(),
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () async {
@@ -129,6 +131,9 @@ class _BMICalculaterState extends State<BMICalculater> {
                           }
                           if (foodItems.isNotEmpty) {
                             userData["food_items_recommended"] = foodItems;
+                          }
+                          if (selectedDiseases.isNotEmpty) {
+                            userData["selected_diseases"] = selectedDiseases;
                           }
 
                           await _database.ref("users/${user.uid}/bioData").set(userData);
@@ -194,6 +199,46 @@ class _BMICalculaterState extends State<BMICalculater> {
         ),
       ),
       keyboardType: TextInputType.text,
+    );
+  }
+
+  Widget _buildDiseaseSelection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Select Non-Infectious Diseases (if any):',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.blueGrey.shade800,
+          ),
+        ),
+        SizedBox(height: 10),
+        Wrap(
+          spacing: 8.0,
+          children: diseases.map((disease) {
+            return ChoiceChip(
+              label: Text(disease),
+              selected: selectedDiseases.contains(disease),
+              onSelected: (selected) {
+                setState(() {
+                  selected
+                      ? selectedDiseases.add(disease)
+                      : selectedDiseases.remove(disease);
+                });
+              },
+              selectedColor: Colors.green.shade200,
+              backgroundColor: Colors.grey.shade200,
+              labelStyle: TextStyle(
+                color: selectedDiseases.contains(disease)
+                    ? Colors.white
+                    : Colors.black,
+              ),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 }
