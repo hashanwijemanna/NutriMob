@@ -9,6 +9,7 @@ import 'BMIAna.dart';
 import 'DietPlan.dart';
 import 'Notifications.dart';
 import 'package:nutri_mob/LoginSignup/login.dart';
+import 'WaterTracker.dart'; // Import the WaterTrackerGame screen
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -137,8 +138,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
             _buildDrawerItem(Icons.notifications, 'Notifications', () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => NotificationsPage()),
+                context,
+                MaterialPageRoute(builder: (context) => NotificationsPage()),
               );
             }),
             _buildDrawerItem(Icons.info, 'About Us', () {
@@ -287,16 +288,55 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemCount: 4,
                   itemBuilder: (context, index) {
                     final items = [
-                      ['Current Diet Plan', 'assets/diet.gif', 'Your diet plan details will be displayed here.'],
-                      ['Health Status', 'assets/health status.gif', 'Your health status summary will be displayed here.'],
-                      ['Gained Calories (Daily)', 'assets/cal.gif', 'Daily calorie intake will be tracked and displayed here.'],
-                      ['Water Level Tracker', 'assets/waterlevel.gif', 'Track your daily water intake here.'],
+                      ['Current Diet Plan', 'assets/diet.gif'],
+                      ['Health Status', 'assets/health status.gif'],
+                      ['Gained Calories (Daily)', 'assets/cal.gif'],
+                      ['Water Level Tracker', 'assets/waterlevel.gif'], // Updated image asset name
                     ];
 
-                    return _buildGridItem(
-                      items[index][0],
-                      items[index][1],
-                      items[index][2],
+                    return GestureDetector(
+                      onTap: () {
+                        if (index == 3) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => WaterTrackingScreen()), // Navigate to WaterTrackerGame
+                          );
+                        }
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              spreadRadius: 2,
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              items[index][1],
+                              width: 50,
+                              height: 50,
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              items[index][0],
+                              style: TextStyle(
+                                fontFamily: 'Lexend',
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -308,86 +348,27 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildImage(String path) {
+  Widget _buildImage(String assetName) {
     return Image.asset(
-      path,
+      assetName,
       fit: BoxFit.cover,
+      width: double.infinity,
+      height: double.infinity,
     );
   }
 
-  Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
+  ListTile _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
     return ListTile(
-      leading: Icon(icon, color: Color(0xFF00B2A9)), // Matching turquoise color
-      title: Text(title),
-      onTap: onTap,
-    );
-  }
-
-  Widget _buildGridItem(String title, String backgroundImage, String description) {
-    return Card(
-      elevation: 5,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Stack(
-          children: [
-            Image.asset(
-              backgroundImage,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
-            ),
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.black.withOpacity(0.6),
-                      Colors.transparent,
-                    ],
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontFamily: 'Lexend',
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        description,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
-                          fontFamily: 'Lexend',
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+      leading: Icon(icon, color: Color(0xFF00B2A9)),
+      title: Text(
+        title,
+        style: TextStyle(
+          fontFamily: 'Lexend',
+          fontWeight: FontWeight.bold,
+          color: Color(0xFF00B2A9),
         ),
       ),
+      onTap: onTap,
     );
   }
 }

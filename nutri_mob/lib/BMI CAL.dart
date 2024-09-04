@@ -18,7 +18,7 @@ class _BMICalculaterState extends State<BMICalculater> {
   var foodItemsController = TextEditingController();
 
   var result = "";
-  var bgColor = Colors.blueGrey.shade100;
+  var bgColor = Colors.blue.shade50;
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseDatabase _database = FirebaseDatabase.instance;
@@ -27,155 +27,222 @@ class _BMICalculaterState extends State<BMICalculater> {
     'Diabetes',
     'Cardiovascular Diseases',
     'Lactose Intolerance',
-    'Osteoporosis'
+    'Osteoporosis',
+    'None' // Added "None" option
   ];
-  List<String> selectedDiseases = [];
+
+  List<String> allergies = [
+    'Dust mites',
+    'Food allergies',
+    'Certain chemicals',
+    'Latex',
+    'Medication',
+    'None' // Added "None" option
+  ];
+
+  String? selectedGender = 'None';
+  String? selectedDisease = 'None';
+  String? selectedAllergy = 'None';
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Enter your details',
-          style: TextStyle(color: Colors.white),
+    return MaterialApp(
+      theme: ThemeData(
+        fontFamily: 'Lexend', // Set Lexend as the default font
+        primarySwatch: Colors.blue,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.blue.shade700,
+          iconTheme: IconThemeData(color: Colors.white),
+          titleTextStyle: TextStyle(
+            fontFamily: 'Lexend',
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20, // Adjust the font size as needed
+          ),
         ),
-        backgroundColor: Colors.blueGrey.shade800,
-        iconTheme: IconThemeData(color: Colors.white), // Back button color
+        textTheme: TextTheme(
+          bodyLarge: TextStyle(
+            fontFamily: 'Lexend',
+            color: Colors.black,
+          ),
+          bodyMedium: TextStyle(
+            fontFamily: 'Lexend',
+            color: Colors.black,
+          ),
+          titleMedium: TextStyle(
+            fontFamily: 'Lexend',
+            color: Colors.black,
+          ),
+        ),
       ),
-      body: Container(
-        color: bgColor,
-        padding: EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Center(
-            child: Container(
-              width: double.infinity,
-              constraints: BoxConstraints(maxWidth: 500),
-              padding: EdgeInsets.all(20.0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(height: 20),
-                  _buildTextField(
-                    controller: wtController,
-                    label: 'Weight (in Kgs)',
-                    icon: Icons.line_weight,
-                  ),
-                  SizedBox(height: 16),
-                  _buildTextField(
-                    controller: htController,
-                    label: 'Height (in centimeters)',
-                    icon: Icons.height,
-                  ),
-                  SizedBox(height: 16),
-                  _buildDatePicker(),
-                  SizedBox(height: 16),
-                  _buildTextField(
-                    controller: allergiesController,
-                    label: 'Allergies (if any)',
-                    icon: Icons.warning,
-                  ),
-                  SizedBox(height: 16),
-                  _buildTextField(
-                    controller: foodItemsController,
-                    label: 'Food Items Recommended (if any)',
-                    icon: Icons.local_dining,
-                  ),
-                  SizedBox(height: 16),
-                  _buildDiseaseSelection(),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () async {
-                      var wt = wtController.text.toString();
-                      var ht = htController.text.toString();
-                      var dob = selectedDateOfBirth;
-                      var allergies = allergiesController.text.toString();
-                      var foodItems = foodItemsController.text.toString();
-
-                      if (wt.isNotEmpty && ht.isNotEmpty && dob != null) {
-                        var iWt = int.parse(wt);
-                        var iht = int.parse(ht);
-
-                        var tM = iht / 100;
-                        var bmi = iWt / (tM * tM);
-
-                        User? user = _auth.currentUser;
-                        if (user != null) {
-                          String email = user.email ?? "unknown";
-
-                          Map<String, dynamic> userData = {
-                            "weight": iWt,
-                            "height": iht,
-                            "date_of_birth": dob.toIso8601String(),
-                            "bmi": bmi.toStringAsFixed(2),
-                            "email": email,
-                          };
-
-                          if (allergies.isNotEmpty) {
-                            userData["allergies"] = allergies;
-                          }
-                          if (foodItems.isNotEmpty) {
-                            userData["food_items_recommended"] = foodItems;
-                          }
-                          if (selectedDiseases.isNotEmpty) {
-                            userData["selected_diseases"] = selectedDiseases;
-                          }
-
-                          DatabaseReference userRef = _database.ref("users/${user.uid}");
-
-                          // Save overall user bioData
-                          await userRef.child("bioData").set(userData);
-
-                          // Save BMI value with a timestamp
-                          String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
-                          await userRef.child("bmiRecords").child(timestamp).set({
-                            "bmi": bmi.toStringAsFixed(2),
-                            "date": DateTime.now().toIso8601String(),
-                          });
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomeScreen(),
-                            ),
-                          );
-                        }
-                      } else {
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'Enter Your Details',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: Colors.blue.shade700,
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
+        body: Container(
+          color: bgColor,
+          padding: EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Center(
+              child: Container(
+                width: double.infinity,
+                constraints: BoxConstraints(maxWidth: 500),
+                padding: EdgeInsets.all(20.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16.0),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 20),
+                    _buildGenderSelection(),
+                    SizedBox(height: 16),
+                    _buildTextField(
+                      controller: wtController,
+                      label: 'Weight (in Kgs)',
+                      icon: Icons.line_weight,
+                    ),
+                    SizedBox(height: 16),
+                    _buildTextField(
+                      controller: htController,
+                      label: 'Height (in centimeters)',
+                      icon: Icons.height,
+                    ),
+                    SizedBox(height: 16),
+                    _buildDatePicker(),
+                    SizedBox(height: 16),
+                    _buildDropdownMenu(
+                      label: 'Select Disease (if any):',
+                      value: selectedDisease,
+                      items: diseases,
+                      onChanged: (newValue) {
                         setState(() {
-                          result = "Please fill all the required fields!";
+                          selectedDisease = newValue;
                         });
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green, // Button color
-                      foregroundColor: Colors.white, // Text color
-                      padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 24.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                      },
+                    ),
+                    SizedBox(height: 16),
+                    _buildDropdownMenu(
+                      label: 'Select Allergies (if any):',
+                      value: selectedAllergy,
+                      items: allergies,
+                      onChanged: (newValue) {
+                        setState(() {
+                          selectedAllergy = newValue;
+                        });
+                      },
+                    ),
+                    SizedBox(height: 16),
+                    _buildTextField(
+                      controller: foodItemsController,
+                      label: 'Food Items Recommended (if any)',
+                      icon: Icons.local_dining,
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () async {
+                        var wt = wtController.text.toString();
+                        var ht = htController.text.toString();
+                        var dob = selectedDateOfBirth;
+                        var allergies = selectedAllergy;
+                        var foodItems = foodItemsController.text.toString();
+
+                        if (wt.isNotEmpty &&
+                            ht.isNotEmpty &&
+                            dob != null &&
+                            selectedGender != 'None') {
+                          var iWt = int.parse(wt);
+                          var iht = int.parse(ht);
+
+                          var tM = iht / 100;
+                          var bmi = iWt / (tM * tM);
+
+                          User? user = _auth.currentUser;
+                          if (user != null) {
+                            String email = user.email ?? "unknown";
+
+                            Map<String, dynamic> userData = {
+                              "weight": iWt,
+                              "height": iht,
+                              "date_of_birth": dob.toIso8601String(),
+                              "bmi": bmi.toStringAsFixed(2),
+                              "email": email,
+                              "gender": selectedGender,
+                            };
+
+                            if (allergies != null && allergies != 'None') {
+                              userData["allergies"] = allergies;
+                            }
+                            if (foodItems.isNotEmpty) {
+                              userData["food_items_recommended"] = foodItems;
+                            }
+                            if (selectedDisease != null && selectedDisease != 'None') {
+                              userData["selected_disease"] = selectedDisease;
+                            }
+
+                            DatabaseReference userRef =
+                            _database.ref("users/${user.uid}");
+
+                            // Save overall user bioData
+                            await userRef.child("bioData").set(userData);
+
+                            // Save BMI value with a timestamp
+                            String timestamp =
+                            DateTime.now().millisecondsSinceEpoch.toString();
+                            await userRef.child("bmiRecords").child(timestamp).set({
+                              "bmi": bmi.toStringAsFixed(2),
+                              "date": DateTime.now().toIso8601String(),
+                            });
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => HomeScreen(),
+                              ),
+                            );
+                          }
+                        } else {
+                          setState(() {
+                            result =
+                            "Please fill all the required fields!";
+                          });
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue.shade700,
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(
+                            vertical: 14.0, horizontal: 24.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                      ),
+                      child: Text('Submit'),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      result,
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.red,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    child: Text('Submit'),
-                  ),
-                  SizedBox(height: 20),
-                  Text(
-                    result,
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.red,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -193,17 +260,17 @@ class _BMICalculaterState extends State<BMICalculater> {
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: Colors.blueGrey.shade600),
+        prefixIcon: Icon(icon, color: Colors.blue.shade700),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide: BorderSide(color: Colors.blueGrey.shade300),
+          borderSide: BorderSide(color: Colors.blue.shade300),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide: BorderSide(color: Colors.blueGrey.shade600),
+          borderSide: BorderSide(color: Colors.blue.shade700),
         ),
       ),
-      keyboardType: TextInputType.text,
+      keyboardType: TextInputType.number,
     );
   }
 
@@ -219,7 +286,7 @@ class _BMICalculaterState extends State<BMICalculater> {
           ),
         ),
         IconButton(
-          icon: Icon(Icons.calendar_today),
+          icon: Icon(Icons.calendar_today, color: Colors.blue.shade700),
           onPressed: () async {
             DateTime? pickedDate = await showDatePicker(
               context: context,
@@ -239,41 +306,92 @@ class _BMICalculaterState extends State<BMICalculater> {
     );
   }
 
-  Widget _buildDiseaseSelection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildGenderSelection() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          'Select Non-Infectious Diseases (if any):',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.blueGrey.shade800,
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              selectedGender = 'Male';
+            });
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: selectedGender == 'Male'
+                    ? Colors.blue.shade700
+                    : Colors.grey,
+                width: 2.0,
+              ),
+            ),
+            child: CircleAvatar(
+              backgroundColor: Colors.transparent,
+              radius: 40, // Adjust size as needed
+              backgroundImage: AssetImage('assets/male.gif'), // Add your male image asset
+            ),
           ),
         ),
-        SizedBox(height: 10),
-        Wrap(
-          spacing: 8.0,
-          children: diseases.map((disease) {
-            return ChoiceChip(
-              label: Text(disease),
-              selected: selectedDiseases.contains(disease),
-              onSelected: (selected) {
-                setState(() {
-                  selected
-                      ? selectedDiseases.add(disease)
-                      : selectedDiseases.remove(disease);
-                });
-              },
-              selectedColor: Colors.green.shade200,
-              backgroundColor: Colors.grey.shade200,
-              labelStyle: TextStyle(
-                color: selectedDiseases.contains(disease)
-                    ? Colors.white
-                    : Colors.black,
+        SizedBox(width: 16),
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              selectedGender = 'Female';
+            });
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: selectedGender == 'Female'
+                    ? Colors.blue.shade700
+                    : Colors.grey,
+                width: 2.0,
               ),
+            ),
+            child: CircleAvatar(
+              backgroundColor: Colors.transparent,
+              radius: 40, // Adjust size as needed
+              backgroundImage: AssetImage('assets/female.gif'), // Add your female image asset
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDropdownMenu({
+    required String label,
+    required String? value,
+    required List<String> items,
+    required void Function(String?) onChanged,
+  }) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.blue.shade700,
+            ),
+          ),
+        ),
+        DropdownButton<String>(
+          value: value,
+          items: items.map((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
             );
           }).toList(),
+          onChanged: onChanged,
+          hint: Text(
+            'Select',
+            style: TextStyle(color: Colors.blue.shade700),
+          ),
         ),
       ],
     );

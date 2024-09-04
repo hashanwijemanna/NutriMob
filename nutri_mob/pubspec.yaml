@@ -110,6 +110,10 @@ flutter:
     - assets/rule3.gif
     - assets/rule4.gif
     - assets/rule5.gif
+    - assets/male.gif
+    - assets/female.gif
+    - assets/virtual_glass.gif
+    - assets/water_droplet.gif
 
   #   - images/a_dot_ham.jpeg
 
@@ -145,6 +149,7 @@ flutter:
         - asset: assets/fonts/LexendDeca-Regular.ttf
         - asset: assets/fonts/LexendDeca-Bold.ttf
           weight: 700 # Bold weight
+
 
 flutter_launcher_icons:
   android: "launcher_icon"
