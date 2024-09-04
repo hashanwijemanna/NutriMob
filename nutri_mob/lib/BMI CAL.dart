@@ -131,7 +131,17 @@ class _BMICalculaterState extends State<BMICalculater> {
                             userData["selected_diseases"] = selectedDiseases;
                           }
 
-                          await _database.ref("users/${user.uid}/bioData").set(userData);
+                          DatabaseReference userRef = _database.ref("users/${user.uid}");
+
+                          // Save overall user bioData
+                          await userRef.child("bioData").set(userData);
+
+                          // Save BMI value with a timestamp
+                          String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+                          await userRef.child("bmiRecords").child(timestamp).set({
+                            "bmi": bmi.toStringAsFixed(2),
+                            "date": DateTime.now().toIso8601String(),
+                          });
 
                           Navigator.push(
                             context,

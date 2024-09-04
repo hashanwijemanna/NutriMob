@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'User.dart';
 import 'AboutUs.dart';
 import 'Rules.dart';
-import 'BMIA.dart';
+import 'BMIAna.dart';
 import 'DietPlan.dart';
 import 'Notifications.dart';
 import 'package:nutri_mob/LoginSignup/login.dart';
