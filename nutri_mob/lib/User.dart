@@ -137,26 +137,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             _buildInfoCard('BMI', bmi),
             const SizedBox(height: 32),
             // Stylish Logout Button
-            ElevatedButton(
-              onPressed: _logout,
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Colors.redAccent, // Text color
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 8,
-                shadowColor: Colors.black.withOpacity(0.3),
-              ),
-              child: Text(
-                'Logout',
-                style: TextStyle(
-                  fontFamily: 'Lexend',
-                  fontWeight: FontWeight.bold,
-                  fontSize: 22,
-                ),
-              ),
-            ),
+
           ],
         ),
       ),
