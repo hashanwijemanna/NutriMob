@@ -57,21 +57,31 @@ class _BMIAnalysisPageState extends State<BMIAnalysisPage> {
       appBar: AppBar(
         title: const Text(
           'BMI Analysis',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'Lexend',
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         backgroundColor: Color(0xFF00B2A9), // Sea light blue
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+        ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.white, Color(0xFFE0F8F7)],
+            colors: [Color(0xFFE0F8F7), Colors.white],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Switch between Weekly and Monthly Data
             Row(
@@ -86,17 +96,22 @@ class _BMIAnalysisPageState extends State<BMIAnalysisPage> {
                     fontFamily: 'Lexend',
                   ),
                 ),
-                Switch(
-                  value: isMonthly,
-                  onChanged: (value) {
-                    setState(() {
-                      isMonthly = value;
-                      _loadBMIData(); // Reload data with new settings
-                    });
-                  },
+                Transform.scale(
+                  scale: 1.2,
+                  child: Switch(
+                    activeColor: Color(0xFF00B2A9),
+                    value: isMonthly,
+                    onChanged: (value) {
+                      setState(() {
+                        isMonthly = value;
+                        _loadBMIData(); // Reload data with new settings
+                      });
+                    },
+                  ),
                 ),
               ],
             ),
+            SizedBox(height: 20), // Add space between switch and chart
             Expanded(
               child: LineChart(
                 LineChartData(
@@ -104,11 +119,19 @@ class _BMIAnalysisPageState extends State<BMIAnalysisPage> {
                   maxX: xLabels.length.toDouble(),
                   minY: 0,
                   maxY: 100,
+                  gridData: FlGridData(show: false),
+                  borderData: FlBorderData(
+                    show: true,
+                    border: Border.all(
+                      color: Colors.grey.shade300,
+                      width: 1,
+                    ),
+                  ),
                   titlesData: FlTitlesData(
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: 40,
+                        reservedSize: 50,
                         getTitlesWidget: (value, meta) {
                           return SideTitleWidget(
                             axisSide: meta.axisSide,
@@ -117,6 +140,7 @@ class _BMIAnalysisPageState extends State<BMIAnalysisPage> {
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.black,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           );
@@ -126,7 +150,7 @@ class _BMIAnalysisPageState extends State<BMIAnalysisPage> {
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: 40,
+                        reservedSize: 50,
                         getTitlesWidget: (value, meta) {
                           final index = value.toInt();
                           final label = (index >= 0 && index < xLabels.length) ? xLabels[index] : '';
@@ -137,6 +161,7 @@ class _BMIAnalysisPageState extends State<BMIAnalysisPage> {
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.black,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           );
@@ -148,9 +173,14 @@ class _BMIAnalysisPageState extends State<BMIAnalysisPage> {
                     LineChartBarData(
                       spots: bmiData,
                       isCurved: true,
-                      color: Colors.blueAccent, // Changed to single Color
-                      dotData: FlDotData(show: false),
+                      dotData: FlDotData(show: true),
                       belowBarData: BarAreaData(show: false),
+                      gradient: LinearGradient(
+                        colors: [Colors.blueAccent, Colors.teal], // Gradient colors
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      aboveBarData: BarAreaData(show: false),
                     ),
                   ],
                 ),

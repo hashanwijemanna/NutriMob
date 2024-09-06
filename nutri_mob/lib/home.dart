@@ -9,7 +9,9 @@ import 'BMIAna.dart';
 import 'DietPlan.dart';
 import 'Notifications.dart';
 import 'package:nutri_mob/LoginSignup/login.dart';
-import 'WaterTracker.dart'; // Import the WaterTrackerGame screen
+import 'WaterTracker.dart';
+import 'Tips&Tricks.dart';
+import 'HealthStatus.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -103,67 +105,103 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            UserAccountsDrawerHeader(
-              accountName: Text(_userName ?? 'User Name'),
-              accountEmail: Text(_userEmail ?? 'user@example.com'),
-              currentAccountPicture: CircleAvatar(
-                backgroundColor: Colors.white,
-                child: Icon(Icons.person, size: 50, color: Color(0xFF00B2A9)),
+        child: Container(
+          color: Color(0xFFE0F8F7), // Lighter sea blue background
+          child: Column(
+            children: [
+              // Custom header
+              Container(
+                padding: EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  color: Color(0xFF00B2A9), // Sea light blue background
+                  borderRadius: BorderRadius.only(
+                    bottomRight: Radius.circular(40),
+                    bottomLeft: Radius.circular(40),
+                  ),
+                ),
+                child: UserAccountsDrawerHeader(
+                  accountName: Text(
+                    _userName ?? 'User Name',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Lexend',
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  accountEmail: Text(
+                    _userEmail ?? 'user@example.com',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.8),
+                      fontFamily: 'Lexend',
+                    ),
+                  ),
+                  currentAccountPicture: CircleAvatar(
+                    backgroundColor: Colors.white,
+                    backgroundImage: AssetImage('assets/pro.gif'),
+                    // Uncomment the following line if you want to use a network image instead
+                    //backgroundImage: NetworkImage('https://example.com/profile_pic.png'),
+                  ),
+                  decoration: BoxDecoration(
+                    color: Color(0xFF00B2A9),
+                  ),
+                ),
               ),
-              decoration: BoxDecoration(
-                color: Color(0xFF00B2A9).withOpacity(0.8),
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    _buildDrawerItem(Icons.person, 'User Profile', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => UserProfileScreen()),
+                      );
+                    }),
+                    _buildDrawerItem(Icons.fitness_center, 'BMI Analysis', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => BMIAnalysisPage()),
+                      );
+                    }),
+                    _buildDrawerItem(Icons.restaurant_menu, 'Diet Plan', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => DietPlanPage()),
+                      );
+                    }),
+                    _buildDrawerItem(Icons.notifications, 'Notifications', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => NotificationsPage()),
+                      );
+                    }),
+                    _buildDrawerItem(Icons.info, 'About Us', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AboutUsPage()),
+                      );
+                    }),
+                    _buildDrawerItem(Icons.rule, 'Rules & Regulations', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => RulesAndRegulationsPage()),
+                      );
+                    }),
+                    const Divider(),
+                    _buildDrawerItem(Icons.logout, 'Logout', () async {
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      );
+                    }),
+                  ],
+                ),
               ),
-            ),
-            _buildDrawerItem(Icons.person, 'User Profile', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => UserProfileScreen()),
-              );
-            }),
-            _buildDrawerItem(Icons.fitness_center, 'BMI Analysis', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => BMIAnalysisPage()),
-              );
-            }),
-            _buildDrawerItem(Icons.restaurant_menu, 'Diet Plan', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => DietPlanPage()),
-              );
-            }),
-            _buildDrawerItem(Icons.notifications, 'Notifications', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => NotificationsPage()),
-              );
-            }),
-            _buildDrawerItem(Icons.info, 'About Us', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AboutUsPage()),
-              );
-            }),
-            _buildDrawerItem(Icons.rule, 'Rules & Regulations', () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => RulesAndRegulationsPage()),
-              );
-            }),
-            const Divider(),
-            _buildDrawerItem(Icons.logout, 'Logout', () async {
-              await FirebaseAuth.instance.signOut(); // Sign out from Firebase
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-              );
-            }),
-          ],
+            ],
+          ),
         ),
       ),
+
       body: Container(
         color: Color(0xFFE0F8F7), // Lighter sea blue
         child: Column(
@@ -285,14 +323,28 @@ class _HomeScreenState extends State<HomeScreen> {
                         MaterialPageRoute(builder: (context) => WaterTrackingScreen()), // Link to WaterTracker
                       );
                     }),
-                    _buildGridItem('Current Diet Plan', 'assets/diet.gif', () {
+                    _buildGridItem('Diet Plan', 'assets/diet.gif', () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => DietPlanPage()), // Link to DietPlan
                       );
                     }),
-                    _buildGridItem('Health Status', 'assets/health status.gif', () {}),
-                    _buildGridItem('Gained Calories', 'assets/cal.gif', () {}),
+                    _buildGridItem('Health Status', 'assets/health status.gif', () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HealthStatusScreen()),
+                      );
+                    }),
+
+                      _buildGridItem('Healthy Tips', 'assets/cal.gif', () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => HealthTipsScreen()),
+                        );
+                      }
+
+
+                    ),
                   ],
                 ),
               ),
