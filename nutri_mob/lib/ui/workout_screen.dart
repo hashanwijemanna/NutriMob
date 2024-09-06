@@ -100,7 +100,7 @@ class WorkoutScreen extends StatelessWidget{
 
   ],
       ),
-    ),
+
         SizedBox(
           height: 20,
         ),
@@ -147,7 +147,7 @@ class WorkoutScreen extends StatelessWidget{
         ],
     ),
         ),
-      ),
-    );
+     ], ),
+    ),) ;
   }
 }

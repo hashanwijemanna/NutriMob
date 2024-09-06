@@ -33,7 +33,7 @@ dependencies:
   firebase_core: ^2.14.0
   firebase_auth: ^4.20.0
   firebase_database: ^10.0.6
-  syncfusion_flutter_charts: ^20.3.44
+  syncfusion_flutter_charts: ^26.2.12
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -43,13 +43,12 @@ dependencies:
   smooth_page_indicator: ^1.2.0+3
   google_sign_in: ^6.2.1
   google_fonts: ^4.0.3
+  fl_chart: ^0.69.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-
-  animations:   ^2.0.0
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
@@ -109,6 +108,11 @@ flutter:
     - assets/rule3.gif
     - assets/rule4.gif
     - assets/rule5.gif
+    - assets/male.gif
+    - assets/female.gif
+    - assets/virtual_glass.gif
+    - assets/water_droplet.gif
+    - assets/UserPic.gif
 
   #   - images/a_dot_ham.jpeg
 
@@ -144,6 +148,7 @@ flutter:
         - asset: assets/fonts/LexendDeca-Regular.ttf
         - asset: assets/fonts/LexendDeca-Bold.ttf
           weight: 700 # Bold weight
+
 
 flutter_launcher_icons:
   android: "launcher_icon"

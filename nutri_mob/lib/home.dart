@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'User.dart';
 import 'AboutUs.dart';
 import 'Rules.dart';
-import 'BMIA.dart';
+import 'BMIAna.dart';
 import 'DietPlan.dart';
 import 'Notifications.dart';
 import 'package:nutri_mob/LoginSignup/login.dart';
+import 'WaterTracker.dart'; // Import the WaterTrackerGame screen
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -134,11 +135,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 MaterialPageRoute(builder: (context) => DietPlanPage()),
               );
             }),
-
             _buildDrawerItem(Icons.notifications, 'Notifications', () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => NotificationsPage()),
+                context,
+                MaterialPageRoute(builder: (context) => NotificationsPage()),
               );
             }),
             _buildDrawerItem(Icons.info, 'About Us', () {
@@ -180,125 +180,120 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 borderRadius: const BorderRadius.vertical(bottom: Radius.circular(30)),
               ),
-              child: Text(
-                'Welcome Back, ${_userName ?? 'User'}!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontFamily: 'Lexend',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Welcome Back, ${_userName ?? 'User'}!',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontFamily: 'Lexend',
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Today is ${_getFormattedDate()}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white.withOpacity(0.8),
+                      fontFamily: 'Lexend',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20), // Space between message and image panel
+
+            // Enhanced Moving Picture Panel
+            Container(
+              height: MediaQuery.of(context).size.height * 0.30,
+              margin: const EdgeInsets.only(top: 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    spreadRadius: 5,
+                    blurRadius: 15,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
+                ),
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: _quotes.length,
+                  itemBuilder: (context, index) {
+                    return Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        _buildImage('assets/slide${index + 1}.gif'),
+                        Positioned(
+                          bottom: 10,
+                          left: 10,
+                          right: 10,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              _quotes[index],
+                              style: TextStyle(
+                                fontSize: 14, // Smaller font size
+                                color: Colors.white,
+                                fontFamily: 'Lexend',
+                                fontWeight: FontWeight.w600,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
-            const SizedBox(height: 10), // Space between message and image panel
-            // Enhanced Moving Picture Panel
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.30,
-                  margin: const EdgeInsets.only(top: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(30),
-                      bottomRight: Radius.circular(30),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        spreadRadius: 5,
-                        blurRadius: 15,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      bottomLeft: Radius.circular(30),
-                      bottomRight: Radius.circular(30),
-                    ),
-                    child: PageView.builder(
-                      controller: _pageController,
-                      itemCount: _quotes.length,
-                      itemBuilder: (context, index) {
-                        return Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            _buildImage('assets/slide${index + 1}.gif'),
-                            Positioned(
-                              bottom: 20,
-                              left: 20,
-                              right: 20,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.6),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                  _quotes[index],
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.white,
-                                    fontFamily: 'Lexend',
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: 20,
-                  right: 20,
-                  child: Icon(
-                    Icons.camera_alt,
-                    color: Colors.white.withOpacity(0.8),
-                    size: 30,
-                  ),
-                ),
-                Positioned(
-                  bottom: 10,
-                  child: Container(
-                    width: 50,
-                    height: 5,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10), // Space between image panel and grid
+
+            const SizedBox(height: 20), // Space between image panel and grid
+
             // Grid at the Bottom
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                  ),
-                  itemCount: 4,
-                  itemBuilder: (context, index) {
-                    final items = [
-                      ['Current Diet Plan', 'assets/diet.gif', 'Your diet plan details will be displayed here.'],
-                      ['Health Status', 'assets/health status.gif', 'Your health status summary will be displayed here.'],
-                      ['Gained Calories (Daily)', 'assets/cal.gif', 'Daily calorie intake will be tracked and displayed here.'],
-                      ['Water Level Tracker', 'assets/waterlevel.gif', 'Track your daily water intake here.'],
-                    ];
-
-                    return _buildGridItem(
-                      items[index][0],
-                      items[index][1],
-                      items[index][2],
-                    );
-                  },
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  childAspectRatio: 1.1, // Make items a bit larger
+                  mainAxisSpacing: 15,
+                  crossAxisSpacing: 15,
+                  children: [
+                    _buildGridItem('Water Level Tracker', 'assets/waterlevel.gif', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => WaterTrackingScreen()), // Link to WaterTracker
+                      );
+                    }),
+                    _buildGridItem('Current Diet Plan', 'assets/diet.gif', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => DietPlanPage()), // Link to DietPlan
+                      );
+                    }),
+                    _buildGridItem('Health Status', 'assets/health status.gif', () {}),
+                    _buildGridItem('Gained Calories', 'assets/cal.gif', () {}),
+                  ],
                 ),
               ),
             ),
@@ -308,81 +303,90 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildImage(String path) {
-    return Image.asset(
-      path,
-      fit: BoxFit.cover,
-    );
-  }
-
-  Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
+  Widget _buildDrawerItem(IconData icon, String text, VoidCallback onTap) {
     return ListTile(
-      leading: Icon(icon, color: Color(0xFF00B2A9)), // Matching turquoise color
-      title: Text(title),
+      leading: Icon(icon, color: Colors.black),
+      title: Text(
+        text,
+        style: TextStyle(
+          fontFamily: 'Lexend',
+          fontWeight: FontWeight.bold,
+        ),
+      ),
       onTap: onTap,
     );
   }
 
-  Widget _buildGridItem(String title, String backgroundImage, String description) {
-    return Card(
-      elevation: 5,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Stack(
-          children: [
-            Image.asset(
-              backgroundImage,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
+  Widget _buildImage(String path) {
+    return Image.asset(
+      path,
+      fit: BoxFit.cover,
+      width: double.infinity,
+    );
+  }
+
+  String _getFormattedDate() {
+    DateTime now = DateTime.now();
+    return '${now.day}/${now.month}/${now.year}';
+  }
+
+  Widget _buildGridItem(String label, String gifPath, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(gifPath),
+            fit: BoxFit.cover,
+          ),
+          borderRadius: BorderRadius.circular(20), // Slightly larger radius
+          color: Colors.black.withOpacity(0.3), // Overlay to enhance text visibility
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3), // Darker shadow for better contrast
+              spreadRadius: 4,
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
-            Positioned.fill(
+          ],
+        ),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Center(
               child: Container(
+                padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [
-                      Colors.black.withOpacity(0.6),
-                      Colors.transparent,
-                    ],
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
+                    colors: [Colors.black.withOpacity(0.6), Colors.black.withOpacity(0.3)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                   ),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(20), // Slightly larger radius
                 ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontFamily: 'Lexend',
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Expanded(
-                    child: Center(
-                      child: Text(
-                        description,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white,
-                          fontFamily: 'Lexend',
-                        ),
-                        textAlign: TextAlign.center,
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14, // Decreased font size
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Lexend',
+                        shadows: [
+                          Shadow(
+                            blurRadius: 6.0, // Increased shadow blur
+                            color: Colors.black.withOpacity(0.6),
+                            offset: Offset(0, 4),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
             ),
           ],

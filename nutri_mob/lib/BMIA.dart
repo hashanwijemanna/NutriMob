@@ -3,7 +3,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'BMI CAL.dart';
-
+import 'package:intl/intl.dart';
 
 class BMIAnalysisPage extends StatefulWidget {
   @override
@@ -25,26 +25,47 @@ class _BMIAnalysisPageState extends State<BMIAnalysisPage> {
   Future<void> _loadBMIData() async {
     User? user = _auth.currentUser;
     if (user != null) {
-      DatabaseReference ref = _database.ref("users/${user.uid}/bioData");
+      DatabaseReference ref = _database.ref("users/${user.uid}/bioData/bmiRecords");
       DataSnapshot snapshot = await ref.get();
 
       if (snapshot.exists) {
         Map<dynamic, dynamic> data = snapshot.value as Map;
+        List<_BMIData> tempData = [];
+
+        data.forEach((key, value) {
+          DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(key));
+          String timePeriod;
+
+          if (isMonthly) {
+            timePeriod = "${dateTime.month}/${dateTime.year}";
+          } else {
+            int weekOfYear = _weekOfYear(dateTime);
+            timePeriod = "Week $weekOfYear";
+          }
+
+          tempData.add(_BMIData(timePeriod, double.parse(value.toString())));
+        });
+
         setState(() {
-          bmiData = [
-            _BMIData('Week 1', double.parse(data['bmi'])),
-            // Add more data points for subsequent weeks or months
-          ];
+          bmiData = tempData;
         });
       }
     }
+  }
+
+  int _weekOfYear(DateTime dateTime) {
+    int dayOfYear = int.parse(DateFormat("D").format(dateTime));
+    return ((dayOfYear - dateTime.weekday + 10) / 7).floor();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('BMI Analysis'),
+        title: const Text(
+          'BMI Analysis',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: Color(0xFF00B2A9), // Sea light blue
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -77,8 +98,7 @@ class _BMIAnalysisPageState extends State<BMIAnalysisPage> {
                   onChanged: (value) {
                     setState(() {
                       isMonthly = value;
-                      // Reload data if necessary
-                      _loadBMIData();
+                      _loadBMIData(); // Reload data with new settings
                     });
                   },
                 ),
@@ -86,10 +106,18 @@ class _BMIAnalysisPageState extends State<BMIAnalysisPage> {
             ),
             Expanded(
               child: SfCartesianChart(
-                title: ChartTitle(text: 'BMI Analysis'),
+                title: ChartTitle(
+                  text: 'BMI Analysis',
+                  textStyle: TextStyle(
+                    color: Colors.blueGrey.shade800,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Lexend',
+                  ),
+                ),
                 legend: Legend(isVisible: true),
                 tooltipBehavior: TooltipBehavior(enable: true),
-                series: <ChartSeries>[
+                series: <CartesianSeries>[
                   LineSeries<_BMIData, String>(
                     dataSource: bmiData,
                     xValueMapper: (_BMIData data, _) => data.timePeriod,
@@ -144,6 +172,6 @@ class _BMIAnalysisPageState extends State<BMIAnalysisPage> {
 class _BMIData {
   _BMIData(this.timePeriod, this.bmi);
 
-  final String timePeriod; // Change from 'week' to 'timePeriod' to support months
+  final String timePeriod; // Change from 'week' to 'timePeriod' to support weeks or months
   final double bmi;
 }
