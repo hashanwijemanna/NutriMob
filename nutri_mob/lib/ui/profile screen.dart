@@ -5,7 +5,7 @@ import 'package:nutri_mob/ui/meal_detail_screen.dart';
 import 'package:nutri_mob/ui/workout_screen.dart';
 import 'package:vector_math/vector_math_64.dart'as math;
 import "package:intl/intl.dart";
-
+import 'package:animations/animations.dart';
 
 class ProfileScreen extends StatelessWidget {
   @override
@@ -28,20 +28,19 @@ class ProfileScreen extends StatelessWidget {
          ),
 
 
-         items: [
-           BottomNavigationBarItem(
-     icon: Padding(
-     padding: const EdgeInsets.only(top: 8.0),
-             child: Icon(Icon.home),
-     ),
-             title: Text(
-               "Home",
-               style: const TextStyle(color: Colors.white),
-             ),
+       items: [
+         BottomNavigationBarItem(
+           icon: Padding(
+             padding: const EdgeInsets.only(top: 8.0),
+             child: Icon(Icons.home),  // Corrected Icon reference
            ),
+           label: "Home",  // Replaced title with label
+         ),
+       ],
 
 
-           BottomNavigationBarItem(
+
+       BottomNavigationBarItem(
              icon: Padding(
            child: Icon(Icons.search),
     padding: const EdgeInsets.only(top: 8.0),
@@ -52,17 +51,13 @@ class ProfileScreen extends StatelessWidget {
              ),
            ),
 
-
-           BottomNavigationBarItem(
-             icon: Padding(
-    child: Icon(Icon.person),
-    padding: const EdgeInsets.only(top: 8.0),
-    ),
-             title: Text(
-               "Profile",
-               style: const TextStyle(color: Colors.white),
-             ),
-           ),
+       BottomNavigationBarItem(
+         icon: Padding(
+           padding: const EdgeInsets.only(top: 8.0),
+           child: Icon(Icons.person),  // Corrected Icon reference
+         ),
+         label: "Profile",  // Replaced title with label
+       ),
 
          ],
      ),
@@ -100,11 +95,13 @@ class ProfileScreen extends StatelessWidget {
                      ),
 
                      trailing: ClipOval(child:Image.asset("assets/User.png "),
-
                      ),
-               SizedBox(
-                 height: 10,
-               ),
+
+         SizedBox(
+           height: 10,
+         ),
+
+
                Row(
                  children: <Widget>[
                _RadialProgress(
@@ -208,9 +205,10 @@ class ProfileScreen extends StatelessWidget {
     color: Colors.redAccent,
     ),
     ),
-
     SizedBox(height: 20,
     ),
+
+
     Expanded(
     child: OpenContainer(
     closedElevation: 0,
