@@ -239,22 +239,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         _buildImage('assets/slide${index + 1}.gif'),
                         Positioned(
-                          bottom: 20,
-                          left: 20,
-                          right: 20,
+                          bottom: 10,
+                          left: 10,
+                          right: 10,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                             decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.6),
-                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.black.withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
                               _quotes[index],
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 14, // Smaller font size
                                 color: Colors.white,
                                 fontFamily: 'Lexend',
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w600,
                               ),
                               textAlign: TextAlign.center,
                             ),
@@ -266,6 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
+
             const SizedBox(height: 20), // Space between image panel and grid
 
             // Grid at the Bottom
@@ -302,21 +303,31 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  String _getFormattedDate() {
-    final now = DateTime.now();
-    final months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    return '${months[now.month - 1]} ${now.day}, ${now.year}';
-  }
-
-  Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
+  Widget _buildDrawerItem(IconData icon, String text, VoidCallback onTap) {
     return ListTile(
-      leading: Icon(icon, color: Color(0xFF00B2A9)),
-      title: Text(title, style: TextStyle(fontFamily: 'Lexend')),
+      leading: Icon(icon, color: Colors.black),
+      title: Text(
+        text,
+        style: TextStyle(
+          fontFamily: 'Lexend',
+          fontWeight: FontWeight.bold,
+        ),
+      ),
       onTap: onTap,
     );
+  }
+
+  Widget _buildImage(String path) {
+    return Image.asset(
+      path,
+      fit: BoxFit.cover,
+      width: double.infinity,
+    );
+  }
+
+  String _getFormattedDate() {
+    DateTime now = DateTime.now();
+    return '${now.day}/${now.month}/${now.year}';
   }
 
   Widget _buildGridItem(String label, String gifPath, VoidCallback onTap) {
@@ -339,44 +350,48 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        child: Center(
-          child: Container(
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.black.withOpacity(0.6), Colors.black.withOpacity(0.3)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-              borderRadius: BorderRadius.circular(20), // Slightly larger radius
-            ),
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20, // Larger text size
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'Lexend',
-                shadows: [
-                  Shadow(
-                    blurRadius: 6.0, // Increased shadow blur
-                    color: Colors.black.withOpacity(0.6),
-                    offset: Offset(0, 4),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.black.withOpacity(0.6), Colors.black.withOpacity(0.3)],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
                   ),
-                ],
+                  borderRadius: BorderRadius.circular(20), // Slightly larger radius
+                ),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14, // Decreased font size
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Lexend',
+                        shadows: [
+                          Shadow(
+                            blurRadius: 6.0, // Increased shadow blur
+                            color: Colors.black.withOpacity(0.6),
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
+          ],
         ),
       ),
-    );
-  }
-
-  Widget _buildImage(String assetPath) {
-    return Image.asset(
-      assetPath,
-      fit: BoxFit.cover,
     );
   }
 }
