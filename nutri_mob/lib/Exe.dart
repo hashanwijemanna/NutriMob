@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class MentalWellnessScreen extends StatelessWidget {
+class ExerciseTipsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mental Wellness'),
+        title: Text('Exercise Tips'),
         backgroundColor: Color(0xFF00B2A9), // Sea light blue
       ),
       body: SingleChildScrollView(
@@ -14,7 +14,7 @@ class MentalWellnessScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Mental Wellness',
+              'Exercise Tips',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -25,30 +25,30 @@ class MentalWellnessScreen extends StatelessWidget {
             SizedBox(height: 20),
             _buildTipCard(
               context,
-              'Practice Mindfulness',
-              'Engage in mindfulness practices like meditation or deep breathing to manage stress and improve mental clarity.',
-              Icons.self_improvement,
+              'Warm Up Properly',
+              'Always start your workout with a warm-up to prepare your muscles and prevent injury.',
+              Icons.accessibility,
             ),
             SizedBox(height: 20),
             _buildTipCard(
               context,
-              'Seek Support',
-              'Don’t hesitate to seek professional help or talk to friends and family when dealing with mental health challenges.',
-              Icons.people,
+              'Stay Hydrated',
+              'Drink plenty of water before, during, and after exercise to stay hydrated and maintain performance.',
+              Icons.local_drink,
             ),
             SizedBox(height: 20),
             _buildTipCard(
               context,
-              'Maintain a Healthy Work-Life Balance',
-              'Set boundaries between work and personal time to reduce stress and improve overall well-being.',
-              Icons.work,
+              'Focus on Form',
+              'Ensure proper form during exercises to maximize effectiveness and minimize risk of injury.',
+              Icons.sports,
             ),
             SizedBox(height: 20),
             _buildTipCard(
               context,
-              'Stay Physically Active',
-              'Exercise regularly as it helps improve mood and reduce symptoms of depression and anxiety.',
-              Icons.fitness_center,
+              'Incorporate Variety',
+              'Mix up your routine with different types of exercises to work different muscle groups and prevent boredom.',
+              Icons.sync,
             ),
           ],
         ),

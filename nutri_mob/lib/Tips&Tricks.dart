@@ -3,7 +3,7 @@ import 'D2DLife.dart';
 import 'HealthyFoods.dart';
 import 'HealthyHabits.dart';
 import 'MentalWellness.dart'; // Import the new screens
-import 'ExerciseTips.dart';   // Import the new screens
+import 'Exe.dart';   // Import the new screens
 
 class HealthTipsScreen extends StatelessWidget {
   @override
@@ -13,7 +13,7 @@ class HealthTipsScreen extends StatelessWidget {
         title: Text('Health Tips & Tricks'),
         backgroundColor: Color(0xFF00B2A9), // Sea light blue
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,7 +54,7 @@ class HealthTipsScreen extends StatelessWidget {
               context,
               'Healthy Habits',
               'Learn about habits that promote a healthier lifestyle.',
-              Icons.trending_up,
+              Icons.monitor_heart_rounded,
                   () => Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => HealthyHabitsScreen()),
