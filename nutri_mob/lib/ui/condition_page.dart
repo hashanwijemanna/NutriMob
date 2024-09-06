@@ -8,96 +8,143 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'User Consent',
+      home: ConditionPage(),
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.teal,
+        textTheme: TextTheme(
+          titleLarge: TextStyle(color: Colors.teal, fontWeight: FontWeight.bold),
+          bodyMedium: TextStyle(fontSize: 16, color: Colors.black87),
+        ),
       ),
-      home: ConsentPage(),
     );
   }
 }
 
-class ConsentPage extends StatefulWidget {
+class ConditionPage extends StatefulWidget {
   @override
-  _ConsentPageState createState() => _ConsentPageState();
+  _ConditionPageState createState() => _ConditionPageState();
 }
 
-class _ConsentPageState extends State<ConsentPage> {
-  bool _healthAwarenessChecked = false;
-  bool _trueInfoChecked = false;
-  bool _acceptRulesChecked = false;
+class _ConditionPageState extends State<ConditionPage> {
+  bool _isHealthAwarenessChecked = false;
+  bool _isTrueInformationChecked = false;
+  bool _isTermsAndConditionsChecked = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User Consent'),
+        title: Text("Conditions"),
+        backgroundColor: Colors.teal,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Please read and accept the following conditions:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          children: <Widget>[
+            Center(
+              child: Text(
+                'Before You Proceed',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.teal,
+                ),
+              ),
             ),
-            SizedBox(height: 20),
-            CheckboxListTile(
-              title: Text('I am concerned about my health awareness.'),
-              value: _healthAwarenessChecked,
+            SizedBox(height: 10),
+            Center(
+              child: Text(
+                'Please accept the following conditions:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontStyle: FontStyle.italic,
+                  color: Colors.black54,
+                ),
+              ),
+            ),
+            SizedBox(height: 30),
+            _buildCustomCheckbox(
+              title: "I am aware of my health and concerned about my well-being.",
+              value: _isHealthAwarenessChecked,
               onChanged: (bool? value) {
                 setState(() {
-                  _healthAwarenessChecked = value!;
+                  _isHealthAwarenessChecked = value ?? false;
                 });
               },
             ),
-            CheckboxListTile(
-              title: Text('I will provide true information and data.'),
-              value: _trueInfoChecked,
+            _buildCustomCheckbox(
+              title: "I agree to provide my true information and data.",
+              value: _isTrueInformationChecked,
               onChanged: (bool? value) {
                 setState(() {
-                  _trueInfoChecked = value!;
+                  _isTrueInformationChecked = value ?? false;
                 });
               },
             ),
-            CheckboxListTile(
-              title: Text('I accept the rules and regulations of the app.'),
-              value: _acceptRulesChecked,
+            _buildCustomCheckbox(
+              title: "I accept the rules and regulations provided by the app.",
+              value: _isTermsAndConditionsChecked,
               onChanged: (bool? value) {
                 setState(() {
-                  _acceptRulesChecked = value!;
+                  _isTermsAndConditionsChecked = value ?? false;
                 });
               },
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _healthAwarenessChecked &&
-                  _trueInfoChecked &&
-                  _acceptRulesChecked
-                  ? () {
-                // Proceed to next screen or perform action
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text('Consent Given'),
-                    content: Text('Thank you for providing consent.'),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('OK'),
-                      ),
-                    ],
+            SizedBox(height: 30),
+            Center(
+              child: ElevatedButton(
+                onPressed: _isHealthAwarenessChecked &&
+                    _isTrueInformationChecked &&
+                    _isTermsAndConditionsChecked
+                    ? () {
+                  // Handle button press
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("All conditions accepted!"),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+                    : null, // Disable button if conditions are not met
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white, backgroundColor: Colors.teal, // Text color
+                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  textStyle: TextStyle(fontSize: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                );
-              }
-                  : null,
-              child: Text('Proceed'),
+                ),
+                child: Text('Continue'),
+              ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildCustomCheckbox({
+    required String title,
+    required bool value,
+    required void Function(bool?) onChanged,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          Checkbox(
+            value: value,
+            onChanged: onChanged,
+            activeColor: Colors.teal,
+          ),
+          Expanded(
+            child: Text(
+              title,
+              style: TextStyle(fontSize: 16, color: Colors.black87),
+            ),
+          ),
+        ],
       ),
     );
   }
