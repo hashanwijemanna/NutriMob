@@ -63,7 +63,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Colors.white, // Set the background color to white
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -73,9 +73,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
               children: [
                 SizedBox(
                   width: double.infinity,
-                  height: height / 2.8,
-                  child: Image.asset("assets/liz-gross-signup-1.gif"),
+                  height: height / 3,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.asset(
+                      "assets/liz-gross-signup-1.gif",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
+                SizedBox(height: 20),
                 Text(
                   'Sign Up',
                   style: GoogleFonts.lexend(
@@ -84,41 +91,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 20),
-                TextFieldInput(
-                  textEditingController: nameController,
+                SizedBox(height: 20),
+                _buildTextField(
+                  controller: nameController,
                   hintText: "Enter your name",
                   icon: Icons.person,
-                  obscureText: false,
-                  backgroundColor: Colors.grey[200], // Set background color for text fields
                 ),
-                const SizedBox(height: 20),
-                TextFieldInput(
-                  textEditingController: emailController,
+                SizedBox(height: 20),
+                _buildTextField(
+                  controller: emailController,
                   hintText: "Enter your email",
                   icon: Icons.email,
-                  obscureText: false,
-                  backgroundColor: Colors.grey[200],
                 ),
-                const SizedBox(height: 20),
-                TextFieldInput(
-                  textEditingController: passwordController,
+                SizedBox(height: 20),
+                _buildTextField(
+                  controller: passwordController,
                   hintText: "Enter your password",
-                  isPass: true,
                   icon: Icons.lock,
-                  obscureText: true,
-                  backgroundColor: Colors.grey[200],
+                  isPassword: true,
                 ),
-                const SizedBox(height: 30),
+                SizedBox(height: 30),
                 MyButton(
-                  onTap: signUp,
+                  onTap: signUpUser,
                   text: "Sign Up",
                   isLoading: isLoading,
                   gradient: const LinearGradient(
                     colors: [Color(0xFF56CCF2), Color(0xFF2F80ED)],
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -149,11 +150,40 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hintText,
+    required IconData icon,
+    bool isPassword = false,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
+      child: TextFieldInput(
+        textEditingController: controller,
+        hintText: hintText,
+        icon: icon,
+        obscureText: isPassword,
+        backgroundColor: Colors.transparent, // Use transparent to apply container background
       ),
     );
   }

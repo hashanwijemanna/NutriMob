@@ -6,7 +6,7 @@ import 'package:nutri_mob/LoginSignup/Widget/button.dart';
 import 'package:nutri_mob/LoginSignup/Widget/snack_bar.dart';
 import 'package:nutri_mob/LoginSignup/Widget/text_field.dart';
 import 'package:nutri_mob/home.dart';
-import 'signup.dart';
+import 'package:nutri_mob/ui/condition_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -84,14 +84,16 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  Image.asset(
-                    "assets/login.gif",
-                    fit: BoxFit.cover,
+                  Positioned.fill(
+                    child: Image.asset(
+                      "assets/login.gif",
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [Colors.black.withOpacity(0.4), Colors.black.withOpacity(0)],
+                        colors: [Colors.black.withOpacity(0.5), Colors.transparent],
                         begin: Alignment.bottomCenter,
                         end: Alignment.topCenter,
                       ),
@@ -118,21 +120,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const SizedBox(height: 20),
-                      TextFieldInput(
-                        textEditingController: emailController,
+                      _buildTextField(
+                        controller: emailController,
                         hintText: "Enter your email",
                         icon: Icons.email,
-                        obscureText: false,
-                        backgroundColor: Colors.grey[200],
                       ),
                       const SizedBox(height: 20),
-                      TextFieldInput(
-                        isPass: true,
-                        textEditingController: passwordController,
+                      _buildTextField(
+                        controller: passwordController,
                         hintText: "Enter your password",
                         icon: Icons.lock,
-                        obscureText: true,
-                        backgroundColor: Colors.grey[200],
+                        isPassword: true,
                       ),
                       Align(
                         alignment: Alignment.centerRight,
@@ -179,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => const SignUpScreen(),
+                                  builder: (context) =>  ConditionsApp(),
                                 ),
                               );
                             },
@@ -199,7 +197,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         onTap: signInWithGoogle,
                         child: Container(
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey[300]!),
+                            gradient: LinearGradient(
+                              colors: [Colors.red.shade600, Colors.red.shade400],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
                             borderRadius: BorderRadius.circular(10),
                             boxShadow: [
                               BoxShadow(
@@ -211,7 +213,23 @@ class _LoginScreenState extends State<LoginScreen> {
                             ],
                           ),
                           padding: const EdgeInsets.all(8),
-                          child: Image.asset('assets/google_logo.png', height: 50),
+                          child: Center(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset('assets/google_logo.png', height: 24),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Sign in with Google',
+                                  style: GoogleFonts.lexend(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 40),
@@ -222,6 +240,35 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hintText,
+    required IconData icon,
+    bool isPassword = false,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: TextFieldInput(
+        textEditingController: controller,
+        hintText: hintText,
+        icon: icon,
+        obscureText: isPassword,
+        backgroundColor: Colors.transparent, // Apply container background
       ),
     );
   }
