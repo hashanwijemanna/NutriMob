@@ -50,6 +50,48 @@ class MentalWellnessScreen extends StatelessWidget {
               'Exercise regularly as it helps improve mood and reduce symptoms of depression and anxiety.',
               Icons.fitness_center,
             ),
+            SizedBox(height: 20),
+            _buildTipCard(
+              context,
+              'Practice Gratitude',
+              'Keep a journal to regularly write down things you’re grateful for to boost positivity and well-being.',
+              Icons.favorite,
+            ),
+            SizedBox(height: 20),
+            _buildTipCard(
+              context,
+              'Limit Screen Time',
+              'Reduce time spent on screens and social media to prevent digital overload and enhance mental health.',
+              Icons.screen_search_desktop,
+            ),
+            SizedBox(height: 20),
+            _buildTipCard(
+              context,
+              'Engage in Hobbies',
+              'Pursue activities and hobbies that you enjoy to relieve stress and bring joy into your life.',
+              Icons.brush,
+            ),
+            SizedBox(height: 20),
+            _buildTipCard(
+              context,
+              'Stay Hydrated',
+              'Drink plenty of water as dehydration can affect your mood and cognitive function.',
+              Icons.local_drink,
+            ),
+            SizedBox(height: 20),
+            _buildTipCard(
+              context,
+              'Get Adequate Sleep',
+              'Aim for 7-9 hours of quality sleep each night to support mental and physical health.',
+              Icons.bed,
+            ),
+            SizedBox(height: 20),
+            _buildTipCard(
+              context,
+              'Set Realistic Goals',
+              'Set achievable goals and break them into smaller steps to manage stress and stay motivated.',
+              Icons.flag,
+            ),
           ],
         ),
       ),
@@ -58,17 +100,18 @@ class MentalWellnessScreen extends StatelessWidget {
 
   Widget _buildTipCard(BuildContext context, String title, String description, IconData icon) {
     return Card(
-      elevation: 4,
+      elevation: 6,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
       ),
+      margin: EdgeInsets.only(bottom: 16),
       child: ListTile(
         contentPadding: EdgeInsets.all(16),
-        leading: Icon(icon, size: 40, color: Color(0xFF00B2A9)),
+        leading: Icon(icon, size: 40, color: Color(0xFF00B2A9)), // Matching color to app bar
         title: Text(
           title,
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
             color: Colors.blueGrey.shade800,
             fontFamily: 'Lexend',
@@ -77,8 +120,8 @@ class MentalWellnessScreen extends StatelessWidget {
         subtitle: Text(
           description,
           style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey.shade600,
+            fontSize: 13,
+            color: Colors.grey.shade700,
           ),
         ),
       ),
