@@ -1,9 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'BMI CAL.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class BMIAnalysisPage extends StatefulWidget {
   @override
@@ -11,167 +10,199 @@ class BMIAnalysisPage extends StatefulWidget {
 }
 
 class _BMIAnalysisPageState extends State<BMIAnalysisPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
-  List<_BMIData> bmiData = [];
-  bool isMonthly = false;
+  final DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
+  List<BMIRecord> _bmiRecords = [];
+  User? user;
+  String _userName = "";
+  String? _userEmail;
+  final _heightController = TextEditingController();
+  final _weightController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _loadBMIData();
+    _fetchUserData();
+    _loadBMIRecords();
   }
 
-  Future<void> _loadBMIData() async {
-    User? user = _auth.currentUser;
+  Future<void> _fetchUserData() async {
+    user = FirebaseAuth.instance.currentUser;
+
     if (user != null) {
-      DatabaseReference ref = _database.ref("users/${user.uid}/bioData/bmiRecords");
-      DataSnapshot snapshot = await ref.get();
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .get();
+
+      setState(() {
+        _userName = userDoc.get('name');
+        _userEmail = user!.email;
+      });
+    }
+  }
+
+  // Function to load BMI records from Firebase
+  void _loadBMIRecords() async {
+    if (user != null) {
+      String userId = user!.uid; // Use current user's UID
+
+      final snapshot = await _dbRef
+          .child('users')
+          .child('bioData')
+          .child('bmiRecords')
+          .child(userId)
+          .get();
 
       if (snapshot.exists) {
-        Map<dynamic, dynamic> data = snapshot.value as Map;
-        List<_BMIData> tempData = [];
+        Map<dynamic, dynamic>? values = snapshot.value as Map<dynamic, dynamic>?;
 
-        data.forEach((key, value) {
-          DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(int.parse(key));
-          String timePeriod;
+        if (values != null) {
+          List<BMIRecord> tempList = [];
 
-          if (isMonthly) {
-            timePeriod = "${dateTime.month}/${dateTime.year}";
-          } else {
-            int weekOfYear = _weekOfYear(dateTime);
-            timePeriod = "Week $weekOfYear";
-          }
+          values.forEach((key, value) {
+            double bmi = (value['bmi'] as num).toDouble(); // Explicit casting
+            DateTime date = DateTime.fromMillisecondsSinceEpoch(
+                int.parse(value['date'].toString()));
+            tempList.add(BMIRecord(date, bmi));
+          });
 
-          tempData.add(_BMIData(timePeriod, double.parse(value.toString())));
-        });
-
-        setState(() {
-          bmiData = tempData;
-        });
+          setState(() {
+            _bmiRecords = tempList;
+          });
+        }
       }
     }
   }
 
-  int _weekOfYear(DateTime dateTime) {
-    int dayOfYear = int.parse(DateFormat("D").format(dateTime));
-    return ((dayOfYear - dateTime.weekday + 10) / 7).floor();
+  void _calculateAndSubmitBMI() async {
+    final heightStr = _heightController.text;
+    final weightStr = _weightController.text;
+
+    if (heightStr.isNotEmpty && weightStr.isNotEmpty) {
+      final heightCm = double.tryParse(heightStr);
+      final weightKg = double.tryParse(weightStr);
+
+      if (heightCm != null && weightKg != null) {
+        // Convert height from cm to meters
+        final heightM = heightCm / 100;
+
+        // Calculate BMI
+        final bmi = weightKg / (heightM * heightM);
+        final date = DateTime.now().millisecondsSinceEpoch;
+
+        if (user != null) {
+          String userId = user!.uid;
+
+          await _dbRef
+              .child('users')
+              .child('bioData')
+              .child('bmiRecords')
+              .child(userId)
+              .push()
+              .set({
+            'bmi': bmi,
+            'date': date,
+          });
+
+          _loadBMIRecords(); // Reload the BMI records after submission
+        }
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'BMI Analysis',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Color(0xFF00B2A9), // Sea light blue
-        iconTheme: const IconThemeData(color: Colors.white),
+        title: Text('BMI Chart'),
       ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.white, Color(0xFFE0F8F7)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        padding: const EdgeInsets.all(16.0),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            // Switch between Weekly and Monthly Data
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'BMI Over ${isMonthly ? 'Month' : 'Week'}',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blueGrey.shade800,
-                    fontFamily: 'Lexend',
-                  ),
-                ),
-                Switch(
-                  value: isMonthly,
-                  onChanged: (value) {
-                    setState(() {
-                      isMonthly = value;
-                      _loadBMIData(); // Reload data with new settings
-                    });
-                  },
-                ),
-              ],
+            // Input fields for height in cm and weight in kg
+            TextField(
+              controller: _heightController,
+              decoration: InputDecoration(labelText: 'Height (cm)'),
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
             ),
-            Expanded(
-              child: SfCartesianChart(
-                title: ChartTitle(
-                  text: 'BMI Analysis',
-                  textStyle: TextStyle(
-                    color: Colors.blueGrey.shade800,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Lexend',
-                  ),
-                ),
-                legend: Legend(isVisible: true),
-                tooltipBehavior: TooltipBehavior(enable: true),
-                series: <CartesianSeries>[
-                  LineSeries<_BMIData, String>(
-                    dataSource: bmiData,
-                    xValueMapper: (_BMIData data, _) => data.timePeriod,
-                    yValueMapper: (_BMIData data, _) => data.bmi,
-                    name: 'BMI',
-                    dataLabelSettings: DataLabelSettings(isVisible: true),
-                    color: Colors.blueAccent,
-                  ),
-                ],
-                primaryXAxis: CategoryAxis(
-                  title: AxisTitle(text: isMonthly ? 'Months' : 'Weeks'),
-                ),
-                primaryYAxis: NumericAxis(
-                  edgeLabelPlacement: EdgeLabelPlacement.shift,
-                  title: AxisTitle(text: 'BMI'),
-                ),
-              ),
+            TextField(
+              controller: _weightController,
+              decoration: InputDecoration(labelText: 'Weight (kg)'),
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 16.0),
             ElevatedButton(
-              onPressed: () async {
-                // Navigate to the BMICalculater page for a new entry
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => BMICalculater()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Color(0xFF00B2A9),
-                padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 24.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                elevation: 5,
-              ),
-              child: Text(
-                'Add New BMI Data',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Lexend',
-                ),
-              ),
+              onPressed: _calculateAndSubmitBMI,
+              child: Text('Submit'),
             ),
+            SizedBox(height: 16.0),
+            _bmiRecords.isEmpty
+                ? Center(child: CircularProgressIndicator())
+                : Expanded(child: _buildChart()),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildChart() {
+    return LineChart(
+      LineChartData(
+        gridData: FlGridData(show: true),
+        titlesData: FlTitlesData(
+          show: true,
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 40,
+              getTitlesWidget: (value, meta) {
+                DateTime date = DateTime.fromMillisecondsSinceEpoch(value.toInt());
+                return SideTitleWidget(
+                  axisSide: meta.axisSide,
+                  child: Text('${date.day}/${date.month} ${date.hour}:${date.minute}'),
+                );
+              },
+            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 40,
+              getTitlesWidget: (value, meta) {
+                return SideTitleWidget(
+                  axisSide: meta.axisSide,
+                  child: Text('${value.toStringAsFixed(1)}'),
+                );
+              },
+            ),
+          ),
+        ),
+        borderData: FlBorderData(
+            show: true, border: Border.all(color: Colors.black, width: 1)),
+        lineBarsData: [
+          LineChartBarData(
+            spots: _bmiRecords
+                .map((record) => FlSpot(
+                record.date.millisecondsSinceEpoch.toDouble(), record.bmi))
+                .toList(),
+            isCurved: true,
+            dotData: FlDotData(show: true),
+            color: Colors.blue,
+            belowBarData: BarAreaData(
+              show: true,
+              color: Colors.blue.withOpacity(0.3),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
-class _BMIData {
-  _BMIData(this.timePeriod, this.bmi);
-
-  final String timePeriod; // Change from 'week' to 'timePeriod' to support weeks or months
+class BMIRecord {
+  final DateTime date;
   final double bmi;
+
+  BMIRecord(this.date, this.bmi);
 }
