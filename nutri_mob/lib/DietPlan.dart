@@ -34,28 +34,22 @@ class _DietPlanPageState extends State<DietPlanPage> {
           .get();
 
       if (userDoc.exists) {
-        // Fetch BMI and meals
         await fetchBMIAndMeals(user!.uid);
       }
     }
   }
 
   Future<void> fetchBMIAndMeals(String uid) async {
-    // Fetch user's BMI from Firebase Realtime Database
     final bioDataRef = _databaseRef.child('users/$uid/bioData');
     final bioDataSnapshot = await bioDataRef.once();
     final bioData = bioDataSnapshot.snapshot.value as Map<dynamic, dynamic>;
 
     if (bioData != null && bioData.containsKey('bmi')) {
       setState(() {
-        // Ensure that the BMI is converted to double if it's stored as a String
         bmi = double.tryParse(bioData['bmi'].toString()) ?? 0.0;
       });
 
-      // Determine BMI category
       String bmiCategory = determineBMICategory(bmi);
-
-      // Fetch meals from Firebase based on BMI category
       await fetchMeals(bmiCategory);
     }
   }
@@ -75,7 +69,6 @@ class _DietPlanPageState extends State<DietPlanPage> {
   Future<void> fetchMeals(String bmiCategory) async {
     String mealType = 'veg'; // or 'non-veg', modify based on user preferences
 
-    // Fetching meals from Firebase Database under BMI category
     final mealsRef = _databaseRef.child('meals/$bmiCategory/$mealType');
 
     final breakfastSnapshot = await mealsRef.child('breakfast').once();
@@ -83,7 +76,6 @@ class _DietPlanPageState extends State<DietPlanPage> {
     final teaSnapshot = await mealsRef.child('tea').once();
     final dinnerSnapshot = await mealsRef.child('dinner').once();
 
-    // Process and shuffle meals
     setState(() {
       breakfastMeals = _getShuffledMeals(breakfastSnapshot.snapshot.value);
       lunchMeals = _getShuffledMeals(lunchSnapshot.snapshot.value);
@@ -97,54 +89,104 @@ class _DietPlanPageState extends State<DietPlanPage> {
       List<String> meals = [];
       mealsData.forEach((key, value) {
         if (value is String) {
-          meals.add(value);  // Add the meal if it's a String
+          meals.add(value);
         } else if (value is List) {
-          // If value is a list, extract the items and add to meals list
           for (var item in value) {
             if (item is String) {
-              meals.add(item);  // Add each string in the list to the meals
+              meals.add(item);
             }
           }
         } else if (value is Map) {
-          // If value is a map, extract the 'name' or relevant key and add to meals
           if (value.containsKey('name')) {
             meals.add(value['name'].toString());
           }
         }
       });
       meals.shuffle(Random());
-      return meals.take(3).toList(); // Retrieve 3 meals
+      return meals.take(3).toList();
     }
     return [];
   }
 
   @override
   Widget build(BuildContext context) {
+    // Use MediaQuery to get screen dimensions
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Your Diet Plan'),
+        backgroundColor: Color(0xFF00B2A9),
+        title: Text('Your Diet Plan', style: TextStyle(color: Colors.white)),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('BMI: $bmi', style: TextStyle(fontSize: 20)),
-            SizedBox(height: 20),
-            Text('Breakfast', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ...breakfastMeals.map((meal) => Text(meal)).toList(),
-            SizedBox(height: 20),
-            Text('Lunch', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ...lunchMeals.map((meal) => Text(meal)).toList(),
-            SizedBox(height: 20),
-            Text('Tea', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ...teaMeals.map((meal) => Text(meal)).toList(),
-            SizedBox(height: 20),
-            Text('Dinner', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ...dinnerMeals.map((meal) => Text(meal)).toList(),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: screenWidth * 0.05, // 5% of the screen width
+            vertical: screenHeight * 0.02, // 2% of the screen height
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'BMI: $bmi',
+                style: TextStyle(
+                  fontSize: screenWidth * 0.05, // 5% of the screen width for font size
+                  color: Color(0xFF00B2A9),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: screenHeight * 0.03), // 3% of screen height
+              _buildMealSection('Breakfast', breakfastMeals, screenWidth),
+              SizedBox(height: screenHeight * 0.03),
+              _buildMealSection('Lunch', lunchMeals, screenWidth),
+              SizedBox(height: screenHeight * 0.03),
+              _buildMealSection('Tea', teaMeals, screenWidth),
+              SizedBox(height: screenHeight * 0.03),
+              _buildMealSection('Dinner', dinnerMeals, screenWidth),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildMealSection(String mealType, List<String> meals, double screenWidth) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          mealType,
+          style: TextStyle(
+            fontSize: screenWidth * 0.045, // Slightly smaller than the BMI font
+            fontWeight: FontWeight.bold,
+            color: Colors.lightBlueAccent,
+          ),
+        ),
+        SizedBox(height: screenWidth * 0.02), // Dynamic spacing based on width
+        ...meals.map((meal) => Container(
+          margin: EdgeInsets.only(bottom: screenWidth * 0.02), // Dynamic margin
+          padding: EdgeInsets.all(screenWidth * 0.03), // Dynamic padding
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                blurRadius: 5,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: Text(
+            meal,
+            style: TextStyle(
+              fontSize: screenWidth * 0.04, // Dynamic font size for meals
+            ),
+          ),
+        )),
+      ],
     );
   }
 }
