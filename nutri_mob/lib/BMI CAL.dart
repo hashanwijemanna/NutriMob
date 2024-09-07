@@ -47,6 +47,7 @@ class _BMICalculaterState extends State<BMICalculater> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Lexend', // Set Lexend as the default font
         primarySwatch: Colors.blue,
