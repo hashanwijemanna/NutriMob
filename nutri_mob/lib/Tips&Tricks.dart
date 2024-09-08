@@ -10,8 +10,16 @@ class HealthTipsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Health Tips & Tricks'),
-        backgroundColor: Color(0xFF00B2A9), // Sea light blue
+        title: Text(
+            'Health Tips & Tricks',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontFamily: 'Lexend',
+          ),
+        ),
+        backgroundColor: Color(0xFF00B2A9),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

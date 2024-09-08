@@ -52,8 +52,16 @@ class _RulesAndRegulationsPageState extends State<RulesAndRegulationsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Rules and Regulations'),
+        title: const Text(
+            'Rules and Regulations',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontFamily: 'Lexend',
+          ),
+        ),
         backgroundColor: Color(0xFF00B2A9), // Sea light blue
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Container(
         color: Color(0xFFE0F8F7), // Light sea blue background

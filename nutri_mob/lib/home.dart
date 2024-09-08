@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nutri_mob/feedback.dart';
 import 'User.dart';
 import 'AboutUs.dart';
 import 'Rules.dart';
@@ -174,16 +175,22 @@ class _HomeScreenState extends State<HomeScreen> {
                         MaterialPageRoute(builder: (context) => NotificationsPage()),
                       );
                     }),
-                    _buildDrawerItem(Icons.info, 'About Us', () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => AboutUsPage()),
-                      );
-                    }),
                     _buildDrawerItem(Icons.rule, 'Rules & Regulations', () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => RulesAndRegulationsPage()),
+                      );
+                    }),
+                    _buildDrawerItem(Icons.feedback, 'Feedback', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => FeedbackPage()),
+                      );
+                    }),
+                    _buildDrawerItem(Icons.info, 'About Us', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => AboutUsPage()),
                       );
                     }),
                     const Divider(),

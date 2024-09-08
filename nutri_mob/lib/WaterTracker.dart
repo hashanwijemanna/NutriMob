@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WaterTrackingScreen extends StatefulWidget {
   @override
@@ -17,15 +18,40 @@ class _WaterTrackingScreenState extends State<WaterTrackingScreen> {
   List<int> _weeklyData = [0, 500, 1000, 1500, 2000, 2500, 3000]; // Sample weekly data
   List<int> _monthlyData = [0, 2000, 4000, 6000, 8000, 10000, 12000]; // Sample monthly data
 
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _saveData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('waterConsumed', waterConsumed);
+    await prefs.setInt('count250mlGlasses', count250mlGlasses);
+    await prefs.setInt('count500mlGlasses', count500mlGlasses);
+    await prefs.setString('selectedPeriod', _selectedPeriod);
+  }
+
+  Future<void> _loadData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      waterConsumed = prefs.getInt('waterConsumed') ?? 0;
+      count250mlGlasses = prefs.getInt('count250mlGlasses') ?? 0;
+      count500mlGlasses = prefs.getInt('count500mlGlasses') ?? 0;
+      _selectedPeriod = prefs.getString('selectedPeriod') ?? 'Daily';
+    });
+  }
+
   void _logWater(int amount) {
     setState(() {
       waterConsumed = (waterConsumed + amount).clamp(0, waterGoal);
       if (amount == 250) {
-        count250mlGlasses += 1; // Increment the count for 250 ml glasses
+        count250mlGlasses += 1;
       } else if (amount == 500) {
-        count500mlGlasses += 1; // Increment the count for 500 ml glasses
+        count500mlGlasses += 1;
       }
     });
+    _saveData();
   }
 
   @override
@@ -35,9 +61,13 @@ class _WaterTrackingScreenState extends State<WaterTrackingScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Water Tracker', style: TextStyle(fontFamily: 'Lexend')),
+        title: Text(
+          'Water Tracker',
+          style: TextStyle(fontFamily: 'Lexend', color: Colors.white),
+        ),
         backgroundColor: Colors.blue.shade700,
         elevation: 0,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(isPortrait ? 16.0 : 24.0),
@@ -46,7 +76,9 @@ class _WaterTrackingScreenState extends State<WaterTrackingScreen> {
           children: [
             _buildDailyWaterTracker(size),
             SizedBox(height: isPortrait ? 20 : 30),
-            _buildWaterConsumedAnalysis(size),
+            _buildPeriodSelector(),
+            SizedBox(height: isPortrait ? 20 : 30),
+            _buildWaterConsumptionChart(),
             SizedBox(height: isPortrait ? 20 : 30),
             _buildHydrationTips(),
           ],
@@ -131,31 +163,6 @@ class _WaterTrackingScreenState extends State<WaterTrackingScreen> {
           _buildLogWaterButtons(),
           SizedBox(height: 20),
           _buildWaterGlassesCount(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWaterConsumedAnalysis(Size size) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.blue.shade50,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          _buildPeriodSelector(),
-          SizedBox(height: 20),
-          _buildWaterConsumptionChart(),
         ],
       ),
     );
@@ -265,36 +272,27 @@ class _WaterTrackingScreenState extends State<WaterTrackingScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildPeriodButton('Daily'),
-        _buildPeriodButton('Weekly'),
-        _buildPeriodButton('Monthly'),
-      ],
-    );
-  }
-
-  Widget _buildPeriodButton(String period) {
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          _selectedPeriod = period;
-        });
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: _selectedPeriod == period ? Colors.blue.shade700 : Colors.blue.shade300,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+        DropdownButton<String>(
+          value: _selectedPeriod,
+          items: <String>['Daily', 'Weekly', 'Monthly'].map((String value) {
+            return DropdownMenuItem<String>(
+              value: value,
+              child: Text(value),
+            );
+          }).toList(),
+          onChanged: (String? newValue) {
+            setState(() {
+              _selectedPeriod = newValue!;
+            });
+          },
+          icon: Icon(Icons.calendar_today),
         ),
-      ),
-      child: Text(
-        period,
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'Lexend'),
-      ),
+      ],
     );
   }
 
   Widget _buildWaterConsumptionChart() {
     List<int> data;
-
     switch (_selectedPeriod) {
       case 'Weekly':
         data = _weeklyData;
@@ -302,12 +300,45 @@ class _WaterTrackingScreenState extends State<WaterTrackingScreen> {
       case 'Monthly':
         data = _monthlyData;
         break;
-      case 'Daily':
       default:
         data = _dailyData;
-        break;
     }
 
+    return Container(
+      height: 300,
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.blue.shade50,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: LineChart(
+        LineChartData(
+          borderData: FlBorderData(show: false),
+          titlesData: FlTitlesData(show: true),
+          gridData: FlGridData(show: true),
+          lineBarsData: [
+            LineChartBarData(
+              spots: data.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value.toDouble())).toList(),
+              isCurved: true,
+              color: Colors.blue.shade700,
+              dotData: FlDotData(show: true),
+              belowBarData: BarAreaData(show: false),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHydrationTips() {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -322,71 +353,33 @@ class _WaterTrackingScreenState extends State<WaterTrackingScreen> {
           ),
         ],
       ),
-      child: SizedBox(
-        height: 250,
-        child: LineChart(
-          LineChartData(
-            gridData: FlGridData(show: false),
-            titlesData: FlTitlesData(show: true),
-            borderData: FlBorderData(
-              show: true,
-              border: Border.all(
-                color: Colors.blue.shade300,
-                width: 1,
-              ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Hydration Tips',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue.shade900,
+              fontFamily: 'Lexend',
             ),
-            lineBarsData: [
-              LineChartBarData(
-                spots: List.generate(data.length, (index) => FlSpot(index.toDouble(), data[index].toDouble())),
-                isCurved: true,
-                color: Colors.blue.shade700, // Updated to `color`
-                dotData: FlDotData(show: false),
-                belowBarData: BarAreaData(show: false),
-              ),
-            ],
-            lineTouchData: LineTouchData(enabled: false),
-            minX: 0,
-            maxX: (data.length - 1).toDouble(),
-            minY: 0,
-            maxY: data.reduce((a, b) => a > b ? a : b).toDouble(),
           ),
-        ),
+          SizedBox(height: 10),
+          Text(
+            '1. Drink a glass of water when you wake up.',
+            style: TextStyle(fontSize: 16, color: Colors.blue.shade700, fontFamily: 'Lexend'),
+          ),
+          Text(
+            '2. Carry a reusable water bottle with you.',
+            style: TextStyle(fontSize: 16, color: Colors.blue.shade700, fontFamily: 'Lexend'),
+          ),
+          Text(
+            '3. Set reminders to drink water throughout the day.',
+            style: TextStyle(fontSize: 16, color: Colors.blue.shade700, fontFamily: 'Lexend'),
+          ),
+        ],
       ),
-    );
-  }
-
-  Widget _buildHydrationTips() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Hydration Tips:',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.blue.shade900,
-            fontFamily: 'Lexend',
-          ),
-        ),
-        SizedBox(height: 10),
-        Card(
-          color: Colors.blue.shade50,
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              '1. Drink water regularly throughout the day.\n'
-                  '2. Carry a water bottle with you.\n'
-                  '3. Include water-rich foods in your diet.\n'
-                  '4. Avoid sugary and caffeinated drinks.',
-              style: TextStyle(fontSize: 16, color: Colors.blueGrey.shade700, fontFamily: 'Lexend'),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

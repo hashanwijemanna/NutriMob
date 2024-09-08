@@ -44,6 +44,7 @@ dependencies:
   google_sign_in: ^6.2.1
   google_fonts: ^4.0.3
   fl_chart: ^0.69.0
+  shared_preferences: ^2.3.2
 
 dev_dependencies:
   flutter_test:
@@ -115,6 +116,7 @@ flutter:
     - assets/UserPic.gif
     - assets/propic.gif
     - assets/pro.gif
+    - assets/feedback.png
 
   #   - images/a_dot_ham.jpeg
 
