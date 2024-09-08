@@ -110,7 +110,6 @@ class _DietPlanPageState extends State<DietPlanPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Use MediaQuery to get screen dimensions
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -123,8 +122,8 @@ class _DietPlanPageState extends State<DietPlanPage> {
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: screenWidth * 0.05, // 5% of the screen width
-            vertical: screenHeight * 0.02, // 2% of the screen height
+            horizontal: screenWidth * 0.05,
+            vertical: screenHeight * 0.02,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,12 +131,12 @@ class _DietPlanPageState extends State<DietPlanPage> {
               Text(
                 'BMI: $bmi',
                 style: TextStyle(
-                  fontSize: screenWidth * 0.05, // 5% of the screen width for font size
+                  fontSize: screenWidth * 0.05,
                   color: Color(0xFF00B2A9),
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: screenHeight * 0.03), // 3% of screen height
+              SizedBox(height: screenHeight * 0.03),
               _buildMealSection('Breakfast', breakfastMeals, screenWidth),
               SizedBox(height: screenHeight * 0.03),
               _buildMealSection('Lunch', lunchMeals, screenWidth),
@@ -156,37 +155,50 @@ class _DietPlanPageState extends State<DietPlanPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          mealType,
+        Row(
+          children: [
+            Icon(
+              Icons.fastfood,
+              color: Colors.lightBlueAccent,
+              size: screenWidth * 0.06,
+            ),
+            SizedBox(width: screenWidth * 0.02),
+            Text(
+              mealType,
+              style: TextStyle(
+                fontSize: screenWidth * 0.045,
+                fontWeight: FontWeight.bold,
+                color: Colors.lightBlueAccent,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: screenWidth * 0.02),
+        ...meals.map((meal) => _buildMealCard(meal, screenWidth)).toList(),
+      ],
+    );
+  }
+
+  Widget _buildMealCard(String meal, double screenWidth) {
+    return Card(
+      elevation: 4,
+      margin: EdgeInsets.only(bottom: screenWidth * 0.02),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      child: ListTile(
+        contentPadding: EdgeInsets.all(screenWidth * 0.03),
+        leading: Image.asset(
+          'assets/images/meal.png', // Placeholder for meal images
+          width: screenWidth * 0.15,
+          fit: BoxFit.cover,
+        ),
+        title: Text(
+          meal,
           style: TextStyle(
-            fontSize: screenWidth * 0.045, // Slightly smaller than the BMI font
-            fontWeight: FontWeight.bold,
-            color: Colors.lightBlueAccent,
+            fontSize: screenWidth * 0.04,
           ),
         ),
-        SizedBox(height: screenWidth * 0.02), // Dynamic spacing based on width
-        ...meals.map((meal) => Container(
-          margin: EdgeInsets.only(bottom: screenWidth * 0.02), // Dynamic margin
-          padding: EdgeInsets.all(screenWidth * 0.03), // Dynamic padding
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 5,
-                spreadRadius: 2,
-              ),
-            ],
-          ),
-          child: Text(
-            meal,
-            style: TextStyle(
-              fontSize: screenWidth * 0.04, // Dynamic font size for meals
-            ),
-          ),
-        )),
-      ],
+        trailing: Icon(Icons.arrow_forward, color: Color(0xFF00B2A9)),
+      ),
     );
   }
 }

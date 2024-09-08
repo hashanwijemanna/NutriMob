@@ -16,6 +16,7 @@ class _BMICalculaterState extends State<BMICalculater> {
   DateTime? selectedDateOfBirth;
   var allergiesController = TextEditingController();
   var foodItemsController = TextEditingController();
+  List<String> foodItemsList = []; // List to store food items
 
   var result = "";
   var bgColor = Colors.blue.shade50;
@@ -28,7 +29,6 @@ class _BMICalculaterState extends State<BMICalculater> {
     'Cardiovascular Diseases',
     'Lactose Intolerance',
     'Osteoporosis',
-    'None' // Added "None" option
   ];
 
   List<String> allergies = [
@@ -37,12 +37,12 @@ class _BMICalculaterState extends State<BMICalculater> {
     'Certain chemicals',
     'Latex',
     'Medication',
-    'None' // Added "None" option
   ];
 
+  List<String> selectedDiseases = [];
+  List<String> selectedAllergies = [];
+
   String? selectedGender = 'None';
-  String? selectedDisease = 'None';
-  String? selectedAllergy = 'None';
 
   @override
   Widget build(BuildContext context) {
@@ -55,24 +55,23 @@ class _BMICalculaterState extends State<BMICalculater> {
           backgroundColor: Colors.blue.shade700,
           iconTheme: IconThemeData(color: Colors.white),
           titleTextStyle: TextStyle(
-            fontFamily: 'Lexend',
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 20, // Adjust the font size as needed
+            fontSize: 14, // Decreased font size
           ),
         ),
         textTheme: TextTheme(
-          bodyLarge: TextStyle(
-            fontFamily: 'Lexend',
+          headlineMedium: TextStyle(
             color: Colors.black,
+            fontSize: 18, // Decreased font size
           ),
           bodyMedium: TextStyle(
-            fontFamily: 'Lexend',
             color: Colors.black,
+            fontSize: 14, // Decreased font size
           ),
-          titleMedium: TextStyle(
-            fontFamily: 'Lexend',
+          bodySmall: TextStyle(
             color: Colors.black,
+            fontSize: 12, // Decreased font size
           ),
         ),
       ),
@@ -80,7 +79,7 @@ class _BMICalculaterState extends State<BMICalculater> {
         appBar: AppBar(
           title: Text(
             'Enter Your Details',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
           backgroundColor: Colors.blue.shade700,
           iconTheme: IconThemeData(color: Colors.white),
@@ -92,7 +91,7 @@ class _BMICalculaterState extends State<BMICalculater> {
             child: Center(
               child: Container(
                 width: double.infinity,
-                constraints: BoxConstraints(maxWidth: 500),
+                constraints: BoxConstraints(maxWidth: 450),
                 padding: EdgeInsets.all(20.0),
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -108,58 +107,53 @@ class _BMICalculaterState extends State<BMICalculater> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(height: 20),
+                    SizedBox(height: 15),
                     _buildGenderSelection(),
-                    SizedBox(height: 16),
+                    SizedBox(height: 12),
                     _buildTextField(
                       controller: wtController,
                       label: 'Weight (in Kgs)',
                       icon: Icons.line_weight,
                     ),
-                    SizedBox(height: 16),
+                    SizedBox(height: 12),
                     _buildTextField(
                       controller: htController,
                       label: 'Height (in centimeters)',
                       icon: Icons.height,
                     ),
-                    SizedBox(height: 16),
+                    SizedBox(height: 10),
                     _buildDatePicker(),
-                    SizedBox(height: 16),
-                    _buildDropdownMenu(
-                      label: 'Select Disease (if any):',
-                      value: selectedDisease,
-                      items: diseases,
-                      onChanged: (newValue) {
+                    SizedBox(height: 10),
+                    _buildMultiSelect(
+                      label: 'Select Diseases (if any):',
+                      options: diseases,
+                      selectedItems: selectedDiseases,
+                      onChanged: (selected) {
                         setState(() {
-                          selectedDisease = newValue;
+                          selectedDiseases = selected;
                         });
                       },
                     ),
                     SizedBox(height: 16),
-                    _buildDropdownMenu(
+                    _buildMultiSelect(
                       label: 'Select Allergies (if any):',
-                      value: selectedAllergy,
-                      items: allergies,
-                      onChanged: (newValue) {
+                      options: allergies,
+                      selectedItems: selectedAllergies,
+                      onChanged: (selected) {
                         setState(() {
-                          selectedAllergy = newValue;
+                          selectedAllergies = selected;
                         });
                       },
                     ),
                     SizedBox(height: 16),
-                    _buildTextField(
-                      controller: foodItemsController,
-                      label: 'Food Items Recommended (if any)',
-                      icon: Icons.local_dining,
-                    ),
+                    _buildFoodItemsInput(), // Updated method for food items input
                     SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () async {
                         var wt = wtController.text.toString();
                         var ht = htController.text.toString();
                         var dob = selectedDateOfBirth;
-                        var allergies = selectedAllergy;
-                        var foodItems = foodItemsController.text.toString();
+                        var foodItems = foodItemsList.join(', ');
 
                         if (wt.isNotEmpty &&
                             ht.isNotEmpty &&
@@ -184,14 +178,14 @@ class _BMICalculaterState extends State<BMICalculater> {
                               "gender": selectedGender,
                             };
 
-                            if (allergies != null && allergies != 'None') {
-                              userData["allergies"] = allergies;
+                            if (selectedAllergies.isNotEmpty) {
+                              userData["allergies"] = selectedAllergies.join(', ');
                             }
                             if (foodItems.isNotEmpty) {
                               userData["food_items_recommended"] = foodItems;
                             }
-                            if (selectedDisease != null && selectedDisease != 'None') {
-                              userData["selected_disease"] = selectedDisease;
+                            if (selectedDiseases.isNotEmpty) {
+                              userData["selected_disease"] = selectedDiseases.join(', ');
                             }
 
                             DatabaseReference userRef =
@@ -217,8 +211,7 @@ class _BMICalculaterState extends State<BMICalculater> {
                           }
                         } else {
                           setState(() {
-                            result =
-                            "Please fill all the required fields!";
+                            result = "Please fill all the required fields!";
                           });
                         }
                       },
@@ -226,7 +219,7 @@ class _BMICalculaterState extends State<BMICalculater> {
                         backgroundColor: Colors.blue.shade700,
                         foregroundColor: Colors.white,
                         padding: EdgeInsets.symmetric(
-                            vertical: 14.0, horizontal: 24.0),
+                            vertical: 12.0, horizontal: 20.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -237,9 +230,9 @@ class _BMICalculaterState extends State<BMICalculater> {
                     Text(
                       result,
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 14, // Decreased font size
                         color: Colors.red,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -283,7 +276,7 @@ class _BMICalculaterState extends State<BMICalculater> {
             selectedDateOfBirth == null
                 ? 'Select Date of Birth'
                 : 'Date of Birth: ${selectedDateOfBirth!.toLocal().toString().split(' ')[0]}',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
           ),
         ),
         IconButton(
@@ -309,7 +302,7 @@ class _BMICalculaterState extends State<BMICalculater> {
 
   Widget _buildGenderSelection() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         GestureDetector(
           onTap: () {
@@ -317,44 +310,39 @@ class _BMICalculaterState extends State<BMICalculater> {
               selectedGender = 'Male';
             });
           },
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: selectedGender == 'Male'
-                    ? Colors.blue.shade700
-                    : Colors.grey,
-                width: 2.0,
+          child: CircleAvatar(
+            radius: 70,
+            backgroundColor: selectedGender == 'Male'
+                ? Colors.blue.shade700
+                : Colors.grey.shade300,
+            child: ClipOval(
+              child: Image.asset(
+                'assets/male.gif',
+                width: 135,
+                height: 135,
+                fit: BoxFit.cover,
               ),
-            ),
-            child: CircleAvatar(
-              backgroundColor: Colors.transparent,
-              radius: 40, // Adjust size as needed
-              backgroundImage: AssetImage('assets/male.gif'), // Add your male image asset
             ),
           ),
         ),
-        SizedBox(width: 16),
         GestureDetector(
           onTap: () {
             setState(() {
               selectedGender = 'Female';
             });
           },
-          child: Container(
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: selectedGender == 'Female'
-                    ? Colors.blue.shade700
-                    : Colors.grey,
-                width: 2.0,
+          child: CircleAvatar(
+            radius: 70,
+            backgroundColor: selectedGender == 'Female'
+                ? Colors.blue.shade700
+                : Colors.grey.shade300,
+            child: ClipOval(
+              child: Image.asset(
+                'assets/female.gif',
+                width: 135,
+                height: 135,
+                fit: BoxFit.cover,
               ),
-            ),
-            child: CircleAvatar(
-              backgroundColor: Colors.transparent,
-              radius: 40, // Adjust size as needed
-              backgroundImage: AssetImage('assets/female.gif'), // Add your female image asset
             ),
           ),
         ),
@@ -362,37 +350,100 @@ class _BMICalculaterState extends State<BMICalculater> {
     );
   }
 
-  Widget _buildDropdownMenu({
+  Widget _buildMultiSelect({
     required String label,
-    required String? value,
-    required List<String> items,
-    required void Function(String?) onChanged,
+    required List<String> options,
+    required List<String> selectedItems,
+    required ValueChanged<List<String>> onChanged,
   }) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.blue.shade700,
-            ),
-          ),
+        Text(
+          label,
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.blue.shade700),
         ),
-        DropdownButton<String>(
-          value: value,
-          items: items.map((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
+        SizedBox(height: 8),
+        Column(
+          children: options.map((option) {
+            return CheckboxListTile(
+              title: Text(option, style: TextStyle(fontSize: 14)), // Decreased font size
+              value: selectedItems.contains(option),
+              onChanged: (bool? selected) {
+                setState(() {
+                  if (selected == true) {
+                    selectedItems.add(option);
+                  } else {
+                    selectedItems.remove(option);
+                  }
+                  onChanged(selectedItems);
+                });
+              },
             );
           }).toList(),
-          onChanged: onChanged,
-          hint: Text(
-            'Select',
-            style: TextStyle(color: Colors.blue.shade700),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFoodItemsInput() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Food Items Recommended (if any):',
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.blue.shade700),
+        ),
+        SizedBox(height: 8),
+        TextField(
+          controller: foodItemsController,
+          decoration: InputDecoration(
+            labelText: 'Enter Food Item',
+            prefixIcon: Icon(Icons.local_dining, color: Colors.blue.shade700),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.0),
+              borderSide: BorderSide(color: Colors.blue.shade300),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.0),
+              borderSide: BorderSide(color: Colors.blue.shade700),
+            ),
+            suffixIcon: IconButton(
+              icon: Icon(Icons.add, color: Colors.blue.shade700),
+              onPressed: () {
+                setState(() {
+                  if (foodItemsController.text.isNotEmpty) {
+                    foodItemsList.add(foodItemsController.text);
+                    foodItemsController.clear();
+                  }
+                });
+              },
+            ),
           ),
+          onSubmitted: (value) {
+            setState(() {
+              if (value.isNotEmpty) {
+                foodItemsList.add(value);
+                foodItemsController.clear();
+              }
+            });
+          },
+        ),
+        SizedBox(height: 10),
+        Wrap(
+          spacing: 8.0,
+          runSpacing: 4.0,
+          children: foodItemsList.map((item) {
+            return Chip(
+              label: Text(item, style: TextStyle(fontSize: 14)), // Decreased font size
+              deleteIcon: Icon(Icons.close, color: Colors.red),
+              onDeleted: () {
+                setState(() {
+                  foodItemsList.remove(item);
+                });
+              },
+            );
+          }).toList(),
         ),
       ],
     );
