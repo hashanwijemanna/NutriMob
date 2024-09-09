@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
-
-import 'LoginSignup/login.dart';
+import 'BMIA.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({super.key});
@@ -67,12 +66,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     return age;
   }
 
-  Future<void> _logout() async {
+  Future<void> _edit() async {
     try {
-      await FirebaseAuth.instance.signOut();
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        MaterialPageRoute(builder: (context) => BMIAnalysisPage()),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -163,13 +161,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               const SizedBox(height: 32),
               // Stylish Logout Button
               ElevatedButton.icon(
-                onPressed: _logout,
-                icon: const Icon(Icons.logout, color: Colors.white),
+                onPressed: _edit,
+                icon: const Icon(Icons.edit, color: Colors.white),
                 label: const Text(
-                  'Logout',
+                  'Edit Bio Data',
                   style: TextStyle(
                     fontFamily: 'Lexend',
-                    fontSize: 14, // Reduced font size
+                    fontSize: 14,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,// Reduced font size
                   ),
                 ),
                 style: ElevatedButton.styleFrom(

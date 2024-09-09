@@ -42,7 +42,7 @@ class ApprovalScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                'Medical Doctor & Consultant Dietitian\nMBBS(SL)(COL)MSC.(FSc)\nRegistraion Number: 10629\nContact nu: +94718371603',
+                'Medical Doctor & Consultant Dietitian\nMBBS(SL)(COL)MSc.(FSc)\nRegistraion Number: 10629\nContact nu: +94718371603',
                 style: TextStyle(
                   fontFamily: 'Lexend',
                   fontSize: 12,
