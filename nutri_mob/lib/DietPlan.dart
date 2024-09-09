@@ -14,6 +14,8 @@ class _DietPlanPageState extends State<DietPlanPage> {
   final DatabaseReference _databaseRef = FirebaseDatabase.instance.ref();
   User? user;
   double bmi = 0.0;
+  String? mealType;
+  String? diseases;
   List<String> breakfastMeals = [];
   List<String> lunchMeals = [];
   List<String> teaMeals = [];
@@ -34,6 +36,8 @@ class _DietPlanPageState extends State<DietPlanPage> {
           .get();
 
       if (userDoc.exists) {
+        await fetchMealType(user!.uid);
+        await fetchDiseases(user!.uid);
         await fetchBMIAndMeals(user!.uid);
       }
     }
@@ -54,6 +58,33 @@ class _DietPlanPageState extends State<DietPlanPage> {
     }
   }
 
+  Future<void> fetchMealType(String uid) async {
+    final bioDataRef = _databaseRef.child('users/$uid/bioData');
+    final bioDataSnapshot = await bioDataRef.once();
+    final bioData = bioDataSnapshot.snapshot.value as Map<dynamic, dynamic>?;
+
+    if (bioData != null && bioData.containsKey('dietary_preference')) {
+      setState(() {
+        mealType = bioData['dietary_preference'].toString();
+      });
+    }
+  }
+
+  Future<void> fetchDiseases(String uid) async {
+    final bioDataRef = _databaseRef.child('users/$uid/bioData');
+    final bioDataSnapshot = await bioDataRef.once();
+    final bioData = bioDataSnapshot.snapshot.value as Map<dynamic, dynamic>?;
+
+    if (bioData != null && bioData.containsKey('selected_disease')) {
+      setState(() {
+        diseases = bioData['selected_disease'].toString();
+      });
+
+      // If the user has selected diseases, fetch disease-specific meals
+      await fetchMealsForDiseases(diseases!);
+    }
+  }
+
   String determineBMICategory(double bmi) {
     if (bmi < 18.5) {
       return 'underweight';
@@ -67,8 +98,6 @@ class _DietPlanPageState extends State<DietPlanPage> {
   }
 
   Future<void> fetchMeals(String bmiCategory) async {
-    String mealType = 'veg'; // or 'non-veg', modify based on user preferences
-
     final mealsRef = _databaseRef.child('meals/$bmiCategory/$mealType');
 
     final breakfastSnapshot = await mealsRef.child('breakfast').once();
@@ -84,12 +113,188 @@ class _DietPlanPageState extends State<DietPlanPage> {
     });
   }
 
+  Future<void> fetchMealsForDiseases(String disease) async {
+    // Assume disease is part of the database path
+    final diseaseMealsRef; //= _databaseRef.child('meals/diseases/$disease/$mealType');
+
+    if(diseases == "Diabetes") {
+      diseaseMealsRef = _databaseRef.child('meals/diseases/diabetes/Normal/$mealType');
+      final breakfastSnapshot = await diseaseMealsRef.child('breakfast').once();
+      final lunchSnapshot = await diseaseMealsRef.child('lunch').once();
+      final teaSnapshot = await diseaseMealsRef.child('tea').once();
+      final dinnerSnapshot = await diseaseMealsRef.child('dinner').once();
+
+      setState(() {
+        breakfastMeals = _getShuffledMeals(breakfastSnapshot.snapshot.value);
+        lunchMeals = _getShuffledMeals(lunchSnapshot.snapshot.value);
+        teaMeals = _getShuffledMeals(teaSnapshot.snapshot.value);
+        dinnerMeals = _getShuffledMeals(dinnerSnapshot.snapshot.value);
+      });
+    }else if(diseases == "Cardiovascular Diseases"){
+      diseaseMealsRef = _databaseRef.child('meals/diseases/cardiovascular/Normal/$mealType');
+      final breakfastSnapshot = await diseaseMealsRef.child('breakfast').once();
+      final lunchSnapshot = await diseaseMealsRef.child('lunch').once();
+      final teaSnapshot = await diseaseMealsRef.child('tea').once();
+      final dinnerSnapshot = await diseaseMealsRef.child('dinner').once();
+
+      setState(() {
+        breakfastMeals = _getShuffledMeals(breakfastSnapshot.snapshot.value);
+        lunchMeals = _getShuffledMeals(lunchSnapshot.snapshot.value);
+        teaMeals = _getShuffledMeals(teaSnapshot.snapshot.value);
+        dinnerMeals = _getShuffledMeals(dinnerSnapshot.snapshot.value);
+      });
+    }else if(diseases == "Lactose Intolerance"){
+      diseaseMealsRef = _databaseRef.child('meals/diseases/lactose/Normal/$mealType');
+      final breakfastSnapshot = await diseaseMealsRef.child('breakfast').once();
+      final lunchSnapshot = await diseaseMealsRef.child('lunch').once();
+      final teaSnapshot = await diseaseMealsRef.child('tea').once();
+      final dinnerSnapshot = await diseaseMealsRef.child('dinner').once();
+
+      setState(() {
+        breakfastMeals = _getShuffledMeals(breakfastSnapshot.snapshot.value);
+        lunchMeals = _getShuffledMeals(lunchSnapshot.snapshot.value);
+        teaMeals = _getShuffledMeals(teaSnapshot.snapshot.value);
+        dinnerMeals = _getShuffledMeals(dinnerSnapshot.snapshot.value);
+      });
+    }else if(diseases == "Osteoporosis"){
+      diseaseMealsRef = _databaseRef.child('meals/diseases/osteoporosis/Normal/$mealType');
+      final breakfastSnapshot = await diseaseMealsRef.child('breakfast').once();
+      final lunchSnapshot = await diseaseMealsRef.child('lunch').once();
+      final teaSnapshot = await diseaseMealsRef.child('tea').once();
+      final dinnerSnapshot = await diseaseMealsRef.child('dinner').once();
+
+      setState(() {
+        breakfastMeals = _getShuffledMeals(breakfastSnapshot.snapshot.value);
+        lunchMeals = _getShuffledMeals(lunchSnapshot.snapshot.value);
+        teaMeals = _getShuffledMeals(teaSnapshot.snapshot.value);
+        dinnerMeals = _getShuffledMeals(dinnerSnapshot.snapshot.value);
+      });
+    }else if(diseases == "Cardiovascular Diseases, Lactose Intolerance"){
+      diseaseMealsRef = _databaseRef.child('meals/diseases/cardiovascular+lactose/Normal/$mealType');
+      final breakfastSnapshot = await diseaseMealsRef.child('breakfast').once();
+      final lunchSnapshot = await diseaseMealsRef.child('lunch').once();
+      final teaSnapshot = await diseaseMealsRef.child('tea').once();
+      final dinnerSnapshot = await diseaseMealsRef.child('dinner').once();
+
+      setState(() {
+        breakfastMeals = _getShuffledMeals(breakfastSnapshot.snapshot.value);
+        lunchMeals = _getShuffledMeals(lunchSnapshot.snapshot.value);
+        teaMeals = _getShuffledMeals(teaSnapshot.snapshot.value);
+        dinnerMeals = _getShuffledMeals(dinnerSnapshot.snapshot.value);
+      });
+    }else if(diseases == "Cardiovascular Diseases, Osteoporosis"){
+      diseaseMealsRef = _databaseRef.child('meals/diseases/cardiovascular+osteoporosis/Normal/$mealType');
+      final breakfastSnapshot = await diseaseMealsRef.child('breakfast').once();
+      final lunchSnapshot = await diseaseMealsRef.child('lunch').once();
+      final teaSnapshot = await diseaseMealsRef.child('tea').once();
+      final dinnerSnapshot = await diseaseMealsRef.child('dinner').once();
+
+      setState(() {
+        breakfastMeals = _getShuffledMeals(breakfastSnapshot.snapshot.value);
+        lunchMeals = _getShuffledMeals(lunchSnapshot.snapshot.value);
+        teaMeals = _getShuffledMeals(teaSnapshot.snapshot.value);
+        dinnerMeals = _getShuffledMeals(dinnerSnapshot.snapshot.value);
+      });
+    }else if(diseases == "Diabetes, Cardiovascular Diseases"){
+      diseaseMealsRef = _databaseRef.child('meals/diseases/diabetes+cardiovascular/Normal/$mealType');
+      final breakfastSnapshot = await diseaseMealsRef.child('breakfast').once();
+      final lunchSnapshot = await diseaseMealsRef.child('lunch').once();
+      final teaSnapshot = await diseaseMealsRef.child('tea').once();
+      final dinnerSnapshot = await diseaseMealsRef.child('dinner').once();
+
+      setState(() {
+        breakfastMeals = _getShuffledMeals(breakfastSnapshot.snapshot.value);
+        lunchMeals = _getShuffledMeals(lunchSnapshot.snapshot.value);
+        teaMeals = _getShuffledMeals(teaSnapshot.snapshot.value);
+        dinnerMeals = _getShuffledMeals(dinnerSnapshot.snapshot.value);
+      });
+    }else if(diseases == "Diabetes, Cardiovascular Diseases, Lactose Intolerance"){
+      diseaseMealsRef = _databaseRef.child('meals/diseases/diabetes+cardiovascular+lactose/Normal/$mealType');
+      final breakfastSnapshot = await diseaseMealsRef.child('breakfast').once();
+      final lunchSnapshot = await diseaseMealsRef.child('lunch').once();
+      final teaSnapshot = await diseaseMealsRef.child('tea').once();
+      final dinnerSnapshot = await diseaseMealsRef.child('dinner').once();
+
+      setState(() {
+        breakfastMeals = _getShuffledMeals(breakfastSnapshot.snapshot.value);
+        lunchMeals = _getShuffledMeals(lunchSnapshot.snapshot.value);
+        teaMeals = _getShuffledMeals(teaSnapshot.snapshot.value);
+        dinnerMeals = _getShuffledMeals(dinnerSnapshot.snapshot.value);
+      });
+    }else if(diseases == "Diabetes, Cardiovascular Diseases, Lactose Intolerance, Osteoporosis"){
+      diseaseMealsRef = _databaseRef.child('meals/diseases/diabetes+cardiovascular+lactose+osteoporosis/Normal/$mealType');
+      final breakfastSnapshot = await diseaseMealsRef.child('breakfast').once();
+      final lunchSnapshot = await diseaseMealsRef.child('lunch').once();
+      final teaSnapshot = await diseaseMealsRef.child('tea').once();
+      final dinnerSnapshot = await diseaseMealsRef.child('dinner').once();
+
+      setState(() {
+        breakfastMeals = _getShuffledMeals(breakfastSnapshot.snapshot.value);
+        lunchMeals = _getShuffledMeals(lunchSnapshot.snapshot.value);
+        teaMeals = _getShuffledMeals(teaSnapshot.snapshot.value);
+        dinnerMeals = _getShuffledMeals(dinnerSnapshot.snapshot.value);
+      });
+    }else if(diseases == "Diabetes, Cardiovascular Diseases, Osteoporosis"){
+      diseaseMealsRef = _databaseRef.child('meals/diseases/diabetes+cardiovascular+osteoporosis/Normal/$mealType');
+      final breakfastSnapshot = await diseaseMealsRef.child('breakfast').once();
+      final lunchSnapshot = await diseaseMealsRef.child('lunch').once();
+      final teaSnapshot = await diseaseMealsRef.child('tea').once();
+      final dinnerSnapshot = await diseaseMealsRef.child('dinner').once();
+
+      setState(() {
+        breakfastMeals = _getShuffledMeals(breakfastSnapshot.snapshot.value);
+        lunchMeals = _getShuffledMeals(lunchSnapshot.snapshot.value);
+        teaMeals = _getShuffledMeals(teaSnapshot.snapshot.value);
+        dinnerMeals = _getShuffledMeals(dinnerSnapshot.snapshot.value);
+      });
+    }else if(diseases == "Diabetes, Lactose Intolerance"){
+      diseaseMealsRef = _databaseRef.child('meals/diseases/diabetes+lactose/Normal/$mealType');
+      final breakfastSnapshot = await diseaseMealsRef.child('breakfast').once();
+      final lunchSnapshot = await diseaseMealsRef.child('lunch').once();
+      final teaSnapshot = await diseaseMealsRef.child('tea').once();
+      final dinnerSnapshot = await diseaseMealsRef.child('dinner').once();
+
+      setState(() {
+        breakfastMeals = _getShuffledMeals(breakfastSnapshot.snapshot.value);
+        lunchMeals = _getShuffledMeals(lunchSnapshot.snapshot.value);
+        teaMeals = _getShuffledMeals(teaSnapshot.snapshot.value);
+        dinnerMeals = _getShuffledMeals(dinnerSnapshot.snapshot.value);
+      });
+    }else if(diseases == "Diabetes, Osteoporosis"){
+      diseaseMealsRef = _databaseRef.child('meals/diseases/diabetes+osteoporosis/Normal/$mealType');
+      final breakfastSnapshot = await diseaseMealsRef.child('breakfast').once();
+      final lunchSnapshot = await diseaseMealsRef.child('lunch').once();
+      final teaSnapshot = await diseaseMealsRef.child('tea').once();
+      final dinnerSnapshot = await diseaseMealsRef.child('dinner').once();
+
+      setState(() {
+        breakfastMeals = _getShuffledMeals(breakfastSnapshot.snapshot.value);
+        lunchMeals = _getShuffledMeals(lunchSnapshot.snapshot.value);
+        teaMeals = _getShuffledMeals(teaSnapshot.snapshot.value);
+        dinnerMeals = _getShuffledMeals(dinnerSnapshot.snapshot.value);
+      });
+    }else{
+      diseaseMealsRef = _databaseRef.child('meals/diseases/lactose+osteoporosis/Normal/$mealType');
+      final breakfastSnapshot = await diseaseMealsRef.child('breakfast').once();
+      final lunchSnapshot = await diseaseMealsRef.child('lunch').once();
+      final teaSnapshot = await diseaseMealsRef.child('tea').once();
+      final dinnerSnapshot = await diseaseMealsRef.child('dinner').once();
+
+      setState(() {
+        breakfastMeals = _getShuffledMeals(breakfastSnapshot.snapshot.value);
+        lunchMeals = _getShuffledMeals(lunchSnapshot.snapshot.value);
+        teaMeals = _getShuffledMeals(teaSnapshot.snapshot.value);
+        dinnerMeals = _getShuffledMeals(dinnerSnapshot.snapshot.value);
+      });
+    }
+
+  }
+
   List<String> _getShuffledMeals(dynamic mealsData) {
     if (mealsData != null) {
       List<String> meals = [];
 
       if (mealsData is Map) {
-        // If mealsData is a Map
         mealsData.forEach((key, value) {
           if (value is String) {
             meals.add(value);
@@ -98,7 +303,6 @@ class _DietPlanPageState extends State<DietPlanPage> {
           }
         });
       } else if (mealsData is List) {
-        // If mealsData is a List
         meals = mealsData.map((item) => item.toString()).toList();
       }
 
@@ -107,7 +311,6 @@ class _DietPlanPageState extends State<DietPlanPage> {
     }
     return [];
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -137,6 +340,16 @@ class _DietPlanPageState extends State<DietPlanPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              if (diseases != null) ...[
+                Text(
+                  'Diseases: $diseases',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.05,
+                    color: Colors.redAccent,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
               SizedBox(height: screenHeight * 0.03),
               _buildMealSection('Breakfast', breakfastMeals, screenWidth),
               SizedBox(height: screenHeight * 0.03),
@@ -187,18 +400,12 @@ class _DietPlanPageState extends State<DietPlanPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: ListTile(
         contentPadding: EdgeInsets.all(screenWidth * 0.03),
-        //leading: Image.asset(
-        //  'assets/images/meal.png', // Placeholder for meal images
-        //  width: screenWidth * 0.15,
-        //  fit: BoxFit.cover,
-        //),
         title: Text(
           meal,
           style: TextStyle(
             fontSize: screenWidth * 0.04,
           ),
         ),
-        //trailing: Icon(Icons.arrow_forward, color: Color(0xFF00B2A9)),
       ),
     );
   }

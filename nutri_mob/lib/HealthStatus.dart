@@ -1,13 +1,77 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:firebase_database/firebase_database.dart';
 
-class HealthStatusScreen extends StatelessWidget {
+class HealthStatusScreen extends StatefulWidget {
+  @override
+  _HealthStatusScreenState createState() => _HealthStatusScreenState();
+}
+
+class _HealthStatusScreenState extends State<HealthStatusScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late DatabaseReference _databaseReference;
+
+  double _bmi = 0.0;
+  double _weight = 0.0;
+  double _height = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData(); // Fetch user data when the screen loads
+  }
+
+  Future<void> _fetchUserData() async {
+    User? user = _auth.currentUser;
+
+    if (user != null) {
+      try {
+        // Fetch bioData (bmi, weight, height) from Realtime Database
+        DatabaseReference databaseReference = FirebaseDatabase.instance.ref('users/${user.uid}/bioData');
+        DataSnapshot snapshot = await databaseReference.get();
+
+        if (snapshot.exists) {
+          // Debug: Check the actual data retrieved
+          print('Data snapshot: ${snapshot.value}');
+
+          setState(() {
+            // Get BMI, weight, and height from Realtime Database and convert string to double
+            _bmi = double.tryParse(snapshot.child('bmi').value.toString()) ?? 0.0;
+            _weight = double.tryParse(snapshot.child('weight').value.toString()) ?? 0.0;
+            _height = double.tryParse(snapshot.child('height').value.toString()) ?? 0.0;
+
+            // Debug: Ensure values are parsed correctly
+            print('BMI: $_bmi, Weight: $_weight, Height: $_height');
+          });
+        } else {
+          // Debug: No data found at the specified path
+          print('No data found at path: users/${user.uid}/bioData');
+        }
+      } catch (e) {
+        // Handle errors here
+        print('Error fetching data: $e');
+      }
+    }
+  }
+
+  String _getHealthStatus(double bmi) {
+    if (bmi < 18.5) {
+      return 'Underweight';
+    } else if (bmi >= 18.5 && bmi < 24.9) {
+      return 'Normal weight';
+    } else if (bmi >= 25 && bmi < 29.9) {
+      return 'Overweight';
+    } else {
+      return 'Obesity';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-            'Health Status',
+          'Health Status',
           style: TextStyle(
             fontFamily: 'Lexend',
             fontWeight: FontWeight.bold,
@@ -41,11 +105,6 @@ class HealthStatusScreen extends StatelessWidget {
               SizedBox(height: 16),
               _buildHealthMetrics(),
               SizedBox(height: 16),
-              Container(
-                height: 250,
-                child: _buildChartSection(),
-              ),
-              SizedBox(height: 16),
               _buildTipsSection(),
             ],
           ),
@@ -76,13 +135,13 @@ class HealthStatusScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            _buildMetricRow('BMI:', '24.5', Colors.blueAccent),
+            _buildMetricRow('BMI:', _bmi.toStringAsFixed(1), Colors.blueAccent),
             SizedBox(height: 8),
-            _buildMetricRow('Weight:', '72 kg', Colors.green),
+            _buildMetricRow('Weight:', '$_weight kg', Colors.green),
             SizedBox(height: 8),
-            _buildMetricRow('Height:', '175 cm', Colors.orange),
+            _buildMetricRow('Height:', '$_height cm', Colors.orange),
             SizedBox(height: 8),
-            _buildMetricRow('Calories Consumed:', '1500 kcal', Colors.red),
+            _buildMetricRow('Health Status:', _getHealthStatus(_bmi), Colors.red),
           ],
         ),
       ),
@@ -111,68 +170,6 @@ class HealthStatusScreen extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildChartSection() {
-    return LineChart(
-      LineChartData(
-        gridData: FlGridData(show: false),
-        titlesData: FlTitlesData(
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 40,
-              getTitlesWidget: (value, meta) {
-                return SideTitleWidget(
-                  axisSide: meta.axisSide,
-                  child: Text(
-                    value.toString(),
-                    style: TextStyle(fontSize: 14, color: Colors.black),
-                  ),
-                );
-              },
-            ),
-          ),
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 40,
-              getTitlesWidget: (value, meta) {
-                return SideTitleWidget(
-                  axisSide: meta.axisSide,
-                  child: Text(
-                    value.toString(),
-                    style: TextStyle(fontSize: 14, color: Colors.black),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-        borderData: FlBorderData(
-          show: true,
-          border: Border.all(
-            color: Colors.black.withOpacity(0.1),
-            width: 1,
-          ),
-        ),
-        lineBarsData: [
-          LineChartBarData(
-            spots: [
-              FlSpot(0, 10),
-              FlSpot(1, 15),
-              FlSpot(2, 20),
-              FlSpot(3, 10),
-              FlSpot(4, 25),
-            ],
-            isCurved: true,
-            color: Colors.blueAccent,
-            dotData: FlDotData(show: false),
-            belowBarData: BarAreaData(show: false),
-          ),
-        ],
-      ),
     );
   }
 

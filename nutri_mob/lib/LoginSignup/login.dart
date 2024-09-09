@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nutri_mob/LoginSignup/PasswordForgot/forgot_password.dart';
 import 'package:nutri_mob/LoginSignup/Services/authentication.dart';
+import 'package:nutri_mob/LoginSignup/SlidingPages.dart';
 import 'package:nutri_mob/LoginSignup/Widget/button.dart';
 import 'package:nutri_mob/LoginSignup/Widget/snack_bar.dart';
 import 'package:nutri_mob/LoginSignup/Widget/text_field.dart';
@@ -59,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (user != null) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
+          builder: (context) => SlidingPages(),
         ),
       );
     } else {
