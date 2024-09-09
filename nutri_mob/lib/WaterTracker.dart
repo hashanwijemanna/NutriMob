@@ -54,6 +54,16 @@ class _WaterTrackingScreenState extends State<WaterTrackingScreen> {
     _saveData();
   }
 
+  // Function to reset all values
+  void _resetData() {
+    setState(() {
+      waterConsumed = 0;
+      count250mlGlasses = 0;
+      count500mlGlasses = 0;
+    });
+    _saveData();
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -76,11 +86,10 @@ class _WaterTrackingScreenState extends State<WaterTrackingScreen> {
           children: [
             _buildDailyWaterTracker(size),
             SizedBox(height: isPortrait ? 20 : 30),
-            _buildPeriodSelector(),
-            SizedBox(height: isPortrait ? 20 : 30),
-            _buildWaterConsumptionChart(),
+            _buildResetButton(),
             SizedBox(height: isPortrait ? 20 : 30),
             _buildHydrationTips(),
+            SizedBox(height: isPortrait ? 20 : 30), // Add the reset button here
           ],
         ),
       ),
@@ -241,26 +250,16 @@ class _WaterTrackingScreenState extends State<WaterTrackingScreen> {
         width: 150,
         padding: EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               title,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue.shade900,
-                fontFamily: 'Lexend',
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Lexend', color: Colors.blue.shade900),
+              textAlign: TextAlign.center,
             ),
             SizedBox(height: 10),
             Text(
               '$count',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue.shade700,
-                fontFamily: 'Lexend',
-              ),
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, fontFamily: 'Lexend', color: Colors.blue.shade900),
             ),
           ],
         ),
@@ -268,75 +267,40 @@ class _WaterTrackingScreenState extends State<WaterTrackingScreen> {
     );
   }
 
-  Widget _buildPeriodSelector() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        DropdownButton<String>(
-          value: _selectedPeriod,
-          items: <String>['Daily', 'Weekly', 'Monthly'].map((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
-            setState(() {
-              _selectedPeriod = newValue!;
-            });
-          },
-          icon: Icon(Icons.calendar_today),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildWaterConsumptionChart() {
-    List<int> data;
-    switch (_selectedPeriod) {
-      case 'Weekly':
-        data = _weeklyData;
-        break;
-      case 'Monthly':
-        data = _monthlyData;
-        break;
-      default:
-        data = _dailyData;
-    }
-
-    return Container(
-      height: 300,
-      padding: EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.blue.shade50,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 5,
-            offset: Offset(0, 2),
+  Widget _buildPeriodButton(String period) {
+    bool isSelected = _selectedPeriod == period;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: ElevatedButton(
+        onPressed: () {
+          setState(() {
+            _selectedPeriod = period;
+          });
+          _saveData();
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isSelected ? Colors.blue.shade700 : Colors.blue.shade200,
+          minimumSize: Size(100, 50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-        ],
-      ),
-      child: LineChart(
-        LineChartData(
-          borderData: FlBorderData(show: false),
-          titlesData: FlTitlesData(show: true),
-          gridData: FlGridData(show: true),
-          lineBarsData: [
-            LineChartBarData(
-              spots: data.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value.toDouble())).toList(),
-              isCurved: true,
-              color: Colors.blue.shade700,
-              dotData: FlDotData(show: true),
-              belowBarData: BarAreaData(show: false),
-            ),
-          ],
+          elevation: 8,
+          shadowColor: Colors.black.withOpacity(0.3),
+        ),
+        child: Text(
+          period,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+            fontFamily: 'Lexend',
+          ),
         ),
       ),
     );
   }
+
+
 
   Widget _buildHydrationTips() {
     return Container(
@@ -367,18 +331,38 @@ class _WaterTrackingScreenState extends State<WaterTrackingScreen> {
           ),
           SizedBox(height: 10),
           Text(
-            '1. Drink a glass of water when you wake up.',
-            style: TextStyle(fontSize: 16, color: Colors.blue.shade700, fontFamily: 'Lexend'),
-          ),
-          Text(
-            '2. Carry a reusable water bottle with you.',
-            style: TextStyle(fontSize: 16, color: Colors.blue.shade700, fontFamily: 'Lexend'),
-          ),
-          Text(
-            '3. Set reminders to drink water throughout the day.',
-            style: TextStyle(fontSize: 16, color: Colors.blue.shade700, fontFamily: 'Lexend'),
+            '• Drink water before and after meals.\n• Carry a water bottle with you.\n• Monitor your urine color for hydration levels.\n• Add fruits like lemon or mint to your water for a refreshing flavor.',
+            style: TextStyle(
+              fontSize: 16,
+              fontFamily: 'Lexend',
+              color: Colors.blue.shade700,
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildResetButton() {
+    return ElevatedButton(
+      onPressed: _resetData,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red.shade700,
+        minimumSize: Size(double.infinity, 50),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        elevation: 8,
+        shadowColor: Colors.black.withOpacity(0.3),
+      ),
+      child: Text(
+        'Reset Water Consumption',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          fontFamily: 'Lexend',
+        ),
       ),
     );
   }

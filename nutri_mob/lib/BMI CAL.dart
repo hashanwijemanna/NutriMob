@@ -32,18 +32,18 @@ class _BMICalculaterState extends State<BMICalculater> {
   ];
 
   List<String> allergies = [
-    'Dust mites',
-    'Food allergies',
-    'Certain chemicals',
-    'Latex',
-    'Medication',
+    'Peanuts',
+    'Soy',
+    'Mustard',
+    'Gluten',
+    'Corn',
   ];
 
   List<String> selectedDiseases = [];
   List<String> selectedAllergies = [];
 
   String? selectedGender = 'None';
-  String? dietaryPreference = 'Veg';
+  String? dietaryPreference = 'veg';
 
   @override
   Widget build(BuildContext context) {
@@ -174,6 +174,7 @@ class _BMICalculaterState extends State<BMICalculater> {
                             if (user != null) {
                               String email = user.email ?? "unknown";
 
+                              // Create the userData map including all the selected details
                               Map<String, dynamic> userData = {
                                 "weight": iWt,
                                 "height": iht,
@@ -181,7 +182,7 @@ class _BMICalculaterState extends State<BMICalculater> {
                                 "bmi": bmi.toStringAsFixed(2),
                                 "email": email,
                                 "gender": selectedGender,
-                                "dietary_preference": dietaryPreference,
+                                "dietary_preference": dietaryPreference,  // Add dietary preference here
                               };
 
                               if (selectedAllergies.isNotEmpty) {
@@ -196,14 +197,17 @@ class _BMICalculaterState extends State<BMICalculater> {
 
                               DatabaseReference userRef = _database.ref("users/${user.uid}");
 
+                              // Store bioData in Firebase
                               await userRef.child("bioData").set(userData);
 
+                              // Store BMI record with a timestamp
                               String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
                               await userRef.child("bmiRecords").child(timestamp).set({
                                 "bmi": bmi.toStringAsFixed(2),
                                 "date": DateTime.now().toIso8601String(),
                               });
 
+                              // Navigate to the home screen after data submission
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -218,14 +222,21 @@ class _BMICalculaterState extends State<BMICalculater> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue.shade700,
+                          backgroundColor: Colors.green,
                           disabledBackgroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                         ),
-                        child: Text('Submit'),
+                        child: Text(
+                            'Submit',
+                          style: TextStyle(
+                            fontFamily: 'Lexend',
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
 
@@ -381,8 +392,8 @@ class _BMICalculaterState extends State<BMICalculater> {
                   });
                 },
                 itemBuilder: (context) => [
-                  PopupMenuItem(value: 'Veg', child: Text('Vegetarian')),
-                  PopupMenuItem(value: 'Non-Veg', child: Text('Non-Vegetarian')),
+                  PopupMenuItem(value: 'veg', child: Text('Vegetarian')),
+                  PopupMenuItem(value: 'non-veg', child: Text('Non-Vegetarian')),
                 ],
               ),
             ),
