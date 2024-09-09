@@ -42,7 +42,7 @@ class _DietPlanPageState extends State<DietPlanPage> {
   Future<void> fetchBMIAndMeals(String uid) async {
     final bioDataRef = _databaseRef.child('users/$uid/bioData');
     final bioDataSnapshot = await bioDataRef.once();
-    final bioData = bioDataSnapshot.snapshot.value as Map<dynamic, dynamic>;
+    final bioData = bioDataSnapshot.snapshot.value as Map<dynamic, dynamic>?;
 
     if (bioData != null && bioData.containsKey('bmi')) {
       setState(() {
@@ -87,26 +87,27 @@ class _DietPlanPageState extends State<DietPlanPage> {
   List<String> _getShuffledMeals(dynamic mealsData) {
     if (mealsData != null) {
       List<String> meals = [];
-      mealsData.forEach((key, value) {
-        if (value is String) {
-          meals.add(value);
-        } else if (value is List) {
-          for (var item in value) {
-            if (item is String) {
-              meals.add(item);
-            }
-          }
-        } else if (value is Map) {
-          if (value.containsKey('name')) {
+
+      if (mealsData is Map) {
+        // If mealsData is a Map
+        mealsData.forEach((key, value) {
+          if (value is String) {
+            meals.add(value);
+          } else if (value is Map && value.containsKey('name')) {
             meals.add(value['name'].toString());
           }
-        }
-      });
+        });
+      } else if (mealsData is List) {
+        // If mealsData is a List
+        meals = mealsData.map((item) => item.toString()).toList();
+      }
+
       meals.shuffle(Random());
       return meals.take(3).toList();
     }
     return [];
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -186,18 +187,18 @@ class _DietPlanPageState extends State<DietPlanPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: ListTile(
         contentPadding: EdgeInsets.all(screenWidth * 0.03),
-        leading: Image.asset(
-          'assets/images/meal.png', // Placeholder for meal images
-          width: screenWidth * 0.15,
-          fit: BoxFit.cover,
-        ),
+        //leading: Image.asset(
+        //  'assets/images/meal.png', // Placeholder for meal images
+        //  width: screenWidth * 0.15,
+        //  fit: BoxFit.cover,
+        //),
         title: Text(
           meal,
           style: TextStyle(
             fontSize: screenWidth * 0.04,
           ),
         ),
-        trailing: Icon(Icons.arrow_forward, color: Color(0xFF00B2A9)),
+        //trailing: Icon(Icons.arrow_forward, color: Color(0xFF00B2A9)),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nutri_mob/Approval.dart';
 import 'package:nutri_mob/feedback.dart';
 import 'User.dart';
 import 'AboutUs.dart';
@@ -191,6 +192,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => AboutUsPage()),
+                      );
+                    }),
+                    _buildDrawerItem(Icons.account_balance, 'Approval Document', () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ApprovalScreen()),
                       );
                     }),
                     const Divider(),

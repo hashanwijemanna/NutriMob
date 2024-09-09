@@ -6,11 +6,22 @@ class HealthStatusScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Health Status'),
+        title: const Text(
+            'Health Status',
+          style: TextStyle(
+            fontFamily: 'Lexend',
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+            color: Colors.white,
+          ),
+        ),
         backgroundColor: Color(0xFF00B2A9),
         elevation: 5,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(30)),
+        ),
+        iconTheme: const IconThemeData(
+          color: Colors.white,
         ),
       ),
       body: SingleChildScrollView(
